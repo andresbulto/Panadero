@@ -802,17 +802,18 @@ function toggleLang(){
 let S={
   lang:'es',r:'baguette',view:'recipe',
   jt:'all',et:'past',is:null,
-  b:{baguette:1,pizza:4,coca:1},
+  b:{baguette:1,pizza:4,coca:1,pao:1,bizcocho:1},
   sz:{pizza:'30cm'},
-  st:{baguette:{},pizza:{},coca:{}},
-  j:{baguette:null,pizza:null,coca:null},
-  sh:{baguette:{pl:false,q:1},pizza:{pl:false,q:4},coca:{pl:false,q:1}},
+  st:{baguette:{},pizza:{},coca:{},pao:{},bizcocho:{}},
+  j:{baguette:null,pizza:null,coca:null,pao:null,bizcocho:null},
+  sh:{baguette:{pl:false,q:1},pizza:{pl:false,q:4},coca:{pl:false,q:1},pao:{pl:false,q:1},bizcocho:{pl:false,q:1}},
   slck:{},
   kt:22,wo:0,hf:'all',pp:null
 };
 function ld(){
   try{const d=JSON.parse(localStorage.getItem('pan-v2')||'null');if(d)Object.assign(S,d);}catch(e){}
   Object.keys(R).forEach(id=>{
+    if(!S.b[id])S.b[id]=R[id].db;
     if(!S.j[id]||!Array.isArray(S.j[id]))S.j[id]=R[id].seedJ.map(e=>({...e}));
     if(!S.st[id])S.st[id]={};
     if(!S.sh[id])S.sh[id]={pl:false,q:R[id].db};
