@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Diario del Panadero</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f7f3ec;--parchment:#ede8de;--parchment2:#e4dccf;
+  --ink:#1a1714;--ink-m:#5c5348;--ink-f:#9c8f82;
+  --rust:#8b3a2a;--rust-l:#c0694f;--rust-bg:#fdf3f0;
+  --gold:#b8962e;--gold-l:#d4b055;--gold-bg:#fdf8ee;
+  --sage:#4a6741;--sage-l:#6b8f68;--sage-bg:#f2f8f0;
+  --blue:#2d5a8e;--blue-bg:#eef4fb;
+  --timer:#1a2d3d;
+  --bdr:rgba(26,23,20,.11);--bdrS:rgba(26,23,20,.22);
+  --sh:0 2px 10px rgba(26,23,20,.07);--shL:0 8px 30px rgba(26,23,20,.13);
+  --r:8px;--font-d:'Playfair Display',serif;--font-b:'Source Serif 4',serif;--font-m:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
+button,input,textarea,select{font-family:var(--font-b);cursor:pointer}
+input,textarea{cursor:text}
+
+/* HEADER */
+header{background:var(--ink);position:sticky;top:0;z-index:200;box-shadow:0 2px 18px rgba(0,0,0,.3)}
+.hi{display:flex;align-items:center;gap:14px;padding:9px 18px;max-width:1120px;margin:0 auto;flex-wrap:wrap}
+.logo{font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--gold-l);white-space:nowrap;flex-shrink:0}
+.logo em{color:#ccc8c0;font-weight:400;font-style:italic}
+nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
+.nb{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:5px 12px;border-radius:16px;font-size:12px;transition:all .15s}
+.nb:hover{background:rgba(255,255,255,.08);color:#fff}
+.nb.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.tw{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:4px 11px;flex-shrink:0}
+.tw label{font-size:11px;color:rgba(255,255,255,.5)}
+.ti{background:transparent;border:none;color:#fff;font-family:var(--font-m);font-size:13px;width:34px;text-align:center}
+.ti:focus{outline:none}
+.tbg{font-size:10px;font-family:var(--font-m);padding:2px 7px;border-radius:10px;font-weight:700}
+.tc{background:#dbeeff;color:#1a4a7a}.tw-warm{background:#ffeacc;color:#7a3a00}.th{background:#ffe0d0;color:#7a1a00}
+
+/* LAYOUT */
+.app{max-width:1120px;margin:0 auto;padding:18px}
+.view{display:none}.view.on{display:block}
+.rl{display:grid;grid-template-columns:290px 1fr;gap:16px;align-items:start}
+@media(max-width:780px){.rl{grid-template-columns:1fr}}
+.sidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:66px}
+@media(max-width:780px){.sidebar{position:static}}
+.mc{display:flex;flex-direction:column;gap:12px}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.ct{font-family:var(--font-d);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-m);margin-bottom:11px;padding-bottom:7px;border-bottom:1px solid var(--bdr)}
+
+/* RECIPE TABS */
+.rtabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:18px}
+.rtab{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:11px 16px;cursor:pointer;transition:all .16s;display:flex;align-items:center;gap:9px;min-width:145px}
+.rtab:hover{border-color:var(--gold-l);transform:translateY(-1px);box-shadow:var(--sh)}
+.rtab.on{border-color:var(--rust);background:var(--rust-bg)}
+.rtab-icon{font-size:20px}
+.rtab-n{font-family:var(--font-d);font-size:13px;font-weight:700}
+.rtab-s{font-size:10px;color:var(--ink-m);font-style:italic}
+
+/* BATCH */
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.bl{font-size:12px;color:var(--ink-m);flex:1}
+.qc{display:flex;align-items:center;border:1.5px solid var(--bdrS);border-radius:6px;overflow:hidden}
+.qb{background:var(--parchment);border:none;width:26px;height:26px;font-size:14px;font-weight:700;color:var(--ink);transition:background .1s;display:flex;align-items:center;justify-content:center}
+.qb:hover{background:var(--parchment2)}
+.qi{width:44px;height:26px;border:none;border-left:1.5px solid var(--bdr);border-right:1.5px solid var(--bdr);text-align:center;font-family:var(--font-m);font-size:12px;background:#fff}
+.qi:focus{outline:none}
+.szbtns{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.szb{border:1.5px solid var(--bdr);background:var(--parchment);border-radius:5px;padding:2px 8px;font-size:11px;font-family:var(--font-m);color:var(--ink-m);transition:all .12s}
+.szb:hover{border-color:var(--rust-l);color:var(--rust)}
+.szb.on{border-color:var(--rust);background:var(--rust-bg);color:var(--rust);font-weight:700}
+
+/* FERM INDICATOR */
+.fbox{background:var(--gold-bg);border:1px solid rgba(184,150,46,.22);border-radius:6px;padding:9px 11px;margin-top:9px;font-size:12px}
+.ftitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:4px}
+.frow{display:flex;justify-content:space-between;margin-bottom:2px}
+.flbl{color:var(--ink-m)}
+.fval{font-family:var(--font-m);font-weight:700;color:var(--ink)}
+.fwarn{color:var(--rust);font-style:italic;font-size:11px;margin-top:4px}
+
+/* INGREDIENTS */
+.ings{display:flex;flex-direction:column}
+.isec{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:700;padding:8px 0 2px;margin-top:2px}
+.irow{display:flex;align-items:center;padding:6px 0;border-bottom:1px solid var(--bdr);gap:8px}
+.irow:last-child{border-bottom:none}
+.in{flex:1;font-size:13px}
+.inote{font-size:10px;color:var(--ink-f);font-style:italic}
+.iq{font-family:var(--font-m);font-size:13px;font-weight:700;color:var(--rust);min-width:55px;text-align:right}
+
+/* STEPS */
+.srow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:2px}
+.chip{background:var(--parchment);border:1px solid var(--bdr);border-radius:14px;padding:2px 10px;font-size:11px;color:var(--ink-m);display:flex;align-items:center;gap:3px}
+.chip strong{color:var(--ink)}
+.prog{height:3px;background:var(--bdr);border-radius:2px;flex:1;overflow:hidden;align-self:center;min-width:60px}
+.pf{height:100%;background:var(--sage);border-radius:2px;transition:width .4s}
+
+.sc{display:flex;flex-direction:column;gap:7px}
+.step{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);transition:opacity .2s}
+.step.done{opacity:.6}
+.step.done .sh{background:var(--sage-bg)}
+.sh{display:flex;align-items:center;gap:11px;padding:11px 14px;cursor:pointer;background:var(--parchment);border-bottom:1px solid var(--bdr);transition:background .12s;user-select:none}
+.sh:hover{background:var(--parchment2)}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--cream);font-family:var(--font-m);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+.step.done .snum{background:var(--sage)}
+.stg{flex:1;min-width:0}
+.stitle{font-family:var(--font-d);font-size:13px;font-weight:700}
+.smeta{font-size:11px;color:var(--ink-m);margin-top:1px}
+.smeta span{margin-right:9px}
+.sacts{display:flex;align-items:center;gap:5px}
+.tbtn{background:var(--timer);border:none;color:#7dd3fc;border-radius:12px;padding:2px 8px;font-size:11px;font-family:var(--font-m);transition:all .14s;display:flex;align-items:center;gap:3px}
+.tbtn:hover{background:#243d51;color:#bae6fd}
+.tbtn.run{background:#0d3530;color:#6ee7b7;animation:pb 1.5s ease-in-out infinite}
+@keyframes pb{0%,100%{box-shadow:0 0 0 0 rgba(110,231,183,.3)}50%{box-shadow:0 0 0 4px rgba(110,231,183,0)}}
+.sck{width:21px;height:21px;border-radius:50%;border:2px solid var(--bdrS);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;background:#fff;flex-shrink:0;transition:all .13s}
+.sck:hover{border-color:var(--sage);color:var(--sage)}
+.step.done .sck{background:var(--sage);border-color:var(--sage);color:#fff}
+.sb{padding:13px 15px;display:none}
+.sb.open{display:block}
+.sact{font-size:14px;line-height:1.65;margin-bottom:9px}
+.stip{background:linear-gradient(135deg,#fdf8f0,#fdf4e7);border-left:3px solid var(--gold);border-radius:0 5px 5px 0;padding:8px 12px;font-size:12.5px;font-style:italic;color:#5c4a1e;margin-top:6px}
+.stip::before{content:"✦ Astucia: ";font-style:normal;font-weight:700;color:var(--gold)}
+
+/* TIMER PANEL */
+.tpanel{display:none;position:fixed;bottom:18px;right:18px;background:var(--timer);border-radius:14px;padding:16px 20px;min-width:230px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.08)}
+.tpanel.open{display:block}
+.tptitle{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.tpname{font-family:var(--font-d);font-size:13px;color:#ddd9d4;margin-bottom:12px;line-height:1.3}
+.tpclock{font-family:var(--font-m);font-size:44px;font-weight:700;color:#fff;text-align:center;letter-spacing:.03em;margin-bottom:3px;line-height:1}
+.tpclock.warn{color:#fbbf24;animation:tk .5s step-end infinite}
+.tpclock.fin{color:#6ee7b7}
+@keyframes tk{0%,100%{opacity:1}50%{opacity:.4}}
+.tpsub{font-size:10px;color:rgba(255,255,255,.38);text-align:center;margin-bottom:12px}
+.tpbtns{display:flex;gap:7px}
+.tpb{flex:1;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:700;transition:all .13s}
+.tpstart{background:#103530;color:#6ee7b7}.tpstart:hover{background:#0d2e2a}
+.tppause{background:#3d2900;color:#fbbf24}.tppause:hover{background:#4a3200}
+.tpreset{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5)}.tpreset:hover{background:rgba(255,255,255,.12)}
+.tpcl{position:absolute;top:9px;right:11px;background:none;border:none;color:rgba(255,255,255,.3);font-size:15px}.tpcl:hover{color:#fff}
+.tflash{position:fixed;inset:0;background:rgba(110,231,183,.13);pointer-events:none;z-index:299;animation:fl .7s ease-out forwards}
+@keyframes fl{0%{opacity:1}100%{opacity:0}}
+
+/* MASTER TIPS */
+.tcard{background:var(--gold-bg);border:1px solid rgba(184,150,46,.18);border-radius:var(--r);padding:14px}
+.tcard .ct{color:var(--gold)}
+.ti2{padding:6px 0;border-bottom:1px solid rgba(184,150,46,.14);font-size:13px;font-style:italic;color:#5c4a1e;display:flex;gap:7px}
+.ti2:last-child{border-bottom:none}
+.ti2::before{content:"✦";color:var(--gold);flex-shrink:0;font-style:normal}
+
+/* JOURNAL */
+.jcard{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.jhead{background:var(--ink);color:var(--cream);padding:11px 15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.jhead h3{font-family:var(--font-d);font-size:13px}
+.jtabs{display:flex;gap:3px}
+.jt{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.6);padding:2px 8px;border-radius:11px;font-size:11px;transition:all .13s}
+.jt.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
+.jbody{padding:13px 15px}
+.jentries{display:flex;flex-direction:column;gap:9px;margin-bottom:11px;max-height:290px;overflow-y:auto}
+.entry{padding:10px 12px;border-radius:6px;border:1px solid var(--bdr);font-size:13px;line-height:1.55;position:relative}
+.entry.past{background:#fdf8f2;border-left:3px solid var(--gold)}
+.entry.next{background:var(--sage-bg);border-left:3px solid var(--sage)}
+.entry.idea{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.etop{display:flex;align-items:center;gap:5px;margin-bottom:4px;flex-wrap:wrap}
+.edate{font-size:10px;color:var(--ink-f);font-family:var(--font-m)}
+.badge{display:inline-block;padding:1px 6px;border-radius:9px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.bp{background:#f5e6c0;color:#7a5c0a}.bn{background:#d8ecd6;color:#2d5929}.bi{background:#dde6f5;color:#1a3c6e}
+.edel{position:absolute;top:7px;right:7px;background:none;border:none;color:var(--ink-f);font-size:11px;opacity:0;transition:opacity .13s}
+.entry:hover .edel{opacity:1}
+.edel:hover{color:var(--rust)}
+.ephoto{margin-top:7px}
+.ephoto img{width:100%;border-radius:4px;max-height:150px;object-fit:cover}
+
+/* Score stars */
+.scorerow{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-m)}
+.sstar{font-size:18px;background:none;border:none;color:#d4ccc3;transition:color .08s;padding:0 1px}
+.sstar.on{color:var(--gold)}
+
+/* JOURNAL FORM */
+.jform{display:flex;flex-direction:column;gap:6px}
+.etrow{display:flex;gap:4px}
+.etb{flex:1;border:1.5px solid var(--bdr);background:var(--parchment);border-radius:5px;padding:4px;font-size:11px;text-align:center;transition:all .12s}
+.etb:hover{border-color:var(--ink-m)}
+.etb.on{border-color:var(--rust);background:var(--rust-bg);color:var(--rust);font-weight:700}
+.jta{width:100%;border:1.5px solid var(--bdr);border-radius:6px;padding:8px;font-size:13px;resize:vertical;min-height:72px;background:#fffff8;color:var(--ink)}
+.jta:focus{outline:none;border-color:var(--rust-l)}
+.photrow{display:flex;align-items:center;gap:7px}
+.plbl{display:flex;align-items:center;gap:4px;background:var(--parchment);border:1.5px solid var(--bdr);border-radius:5px;padding:4px 10px;font-size:11px;transition:all .12s}
+.plbl:hover{border-color:var(--gold)}
+.plbl input{display:none}
+.pprev{width:36px;height:36px;border-radius:4px;object-fit:cover;display:none;border:1px solid var(--bdr)}
+.frow2{display:flex;gap:6px;align-items:center}
+.btnp{background:var(--rust);color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;transition:background .12s}
+.btnp:hover{background:var(--rust-l)}
+.btns{background:var(--parchment);color:var(--ink);border:1.5px solid var(--bdrS);border-radius:6px;padding:7px 14px;font-size:12px;transition:all .12s}
+.btns:hover{background:var(--parchment2)}
+
+/* HISTORY */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:12px}
+.hcard{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);transition:transform .16s}
+.hcard:hover{transform:translateY(-2px);box-shadow:var(--shL)}
+.hphoto{height:130px;background:var(--parchment);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--bdrS)}
+.hphoto img{width:100%;height:100%;object-fit:cover}
+.hbody{padding:12px}
+.hname{font-family:var(--font-d);font-size:14px;font-weight:700;margin-bottom:1px}
+.hdate{font-size:10px;color:var(--ink-f);font-family:var(--font-m);margin-bottom:5px}
+.hstars{font-size:14px;margin-bottom:6px}
+.hon{color:var(--gold)}.hoff{color:#d4ccc3}
+.hrb{display:inline-block;padding:1px 7px;border-radius:9px;font-size:10px;background:var(--parchment);color:var(--ink-m);margin-bottom:5px;font-weight:700}
+.htext{font-size:12px;color:var(--ink-m);font-style:italic;line-height:1.45}
+
+.schart{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);padding:16px;box-shadow:var(--sh);margin-bottom:12px}
+.cbars{display:flex;align-items:flex-end;gap:9px;height:90px;padding-bottom:3px;border-bottom:1px solid var(--bdr)}
+.cbg{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.cbar{border-radius:3px 3px 0 0;transition:height .5s;min-width:16px}
+.clbl{font-family:var(--font-m);font-size:9px;color:var(--ink-f)}
+.cscore{font-size:10px;font-weight:700;color:var(--ink-m)}
+
+/* WEEK CALENDAR */
+.week-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.wrange{font-family:var(--font-d);font-size:15px;font-weight:700}
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+@media(max-width:700px){.wgrid{grid-template-columns:repeat(4,1fr)}}
+.dcol{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);min-height:180px;overflow:hidden;box-shadow:var(--sh)}
+.dhead{padding:7px 9px;border-bottom:1px solid var(--bdr);background:var(--parchment)}
+.dname{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-m)}
+.ddate{font-family:var(--font-m);font-size:17px;font-weight:700}
+.dtoday .dhead{background:var(--rust-bg)}
+.dtoday .ddate{color:var(--rust)}
+.dbody{padding:5px;display:flex;flex-direction:column;gap:3px}
+.dev{border-left:3px solid var(--gold);border-radius:0 3px 3px 0;padding:3px 6px;font-size:10px;cursor:pointer;transition:background .11s;background:var(--parchment);line-height:1.3}
+.dev:hover{background:var(--parchment2)}
+.dev.eb{border-color:var(--rust)}
+.dev.ep{border-color:var(--blue)}
+.dev.ec{border-color:var(--sage)}
+.devn{font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.devs{color:var(--ink-m)}
+.devt{font-family:var(--font-m);font-size:9px;color:var(--ink-f)}
+
+/* SHOPPING */
+.slayout{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
+@media(max-width:700px){.slayout{grid-template-columns:1fr}}
+.pcard{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .16s;margin-bottom:9px}
+.pcard:hover{border-color:var(--rust-l);transform:translateY(-1px)}
+.pcard.pl{border-color:var(--rust);background:var(--rust-bg)}
+.pcn{font-family:var(--font-d);font-size:14px;font-weight:700}
+.pcs{font-size:10px;color:var(--ink-m);margin-bottom:7px}
+.slcard{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:var(--shL)}
+.slh{background:var(--ink);color:var(--cream);padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.slh h2{font-family:var(--font-d);font-size:16px}
+.slbody{padding:16px}
+.slct{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-f);font-weight:700;padding-bottom:3px;border-bottom:1px solid var(--bdr);margin-bottom:5px;margin-top:12px}
+.slct:first-child{margin-top:0}
+.sli{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bdr);cursor:pointer}
+.sli:last-child{border-bottom:none}
+.sli.ck{opacity:.4}
+.slck{width:16px;height:16px;border:2px solid var(--bdrS);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .12s}
+.sli.ck .slck{background:var(--sage);border-color:var(--sage);color:#fff}
+.slin{flex:1;font-size:13px}
+.sliq{font-family:var(--font-m);font-size:12px;color:var(--rust);font-weight:700}
+.slir{font-size:10px;color:var(--ink-f);font-style:italic}
+.empty{text-align:center;padding:44px 20px;color:var(--ink-m)}
+.ei{font-size:40px;margin-bottom:9px}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(26,23,20,.55);z-index:400;align-items:center;justify-content:center;padding:18px}
+.overlay.open{display:flex}
+.modal{background:var(--cream);border-radius:12px;max-width:500px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.3);overflow:hidden}
+.mh{background:var(--ink);color:var(--cream);padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.mh h3{font-family:var(--font-d);font-size:14px}
+.mcl{background:none;border:none;color:rgba(255,255,255,.45);font-size:16px}.mcl:hover{color:#fff}
+.mb{padding:16px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bdrS);border-radius:2px}
+@media print{header,.tpanel,.jform,.btnp,.btns,.tbtn,.sck,.tpcl{display:none!important}.app{padding:0}.sli.ck{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <div class="logo">El Diario <em>del Panadero</em></div>
+    <nav>
+      <button class="nb on" onclick="gv('recipe')">📖 Recetas</button>
+      <button class="nb" onclick="gv('week')">📅 Semana</button>
+      <button class="nb" onclick="gv('history')">🏆 Historial</button>
+      <button class="nb" onclick="gv('shopping')">🛒 Compra</button>
+    </nav>
+    <div class="tw">
+      <label>🌡</label>
+      <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()">°C
+      <span class="tbg tc" id="tbadge">Normal</span>
+    </div>
+  </div>
+</header>
+
+<div class="app">
+
+<!-- RECIPES -->
+<div class="view on" id="v-recipe">
+  <div class="rtabs" id="rtabs"></div>
+  <div class="rl">
+    <div class="sidebar">
+      <div class="card"><div class="ct">⚖️ Cantidades</div><div id="bctrl"></div></div>
+      <div class="card"><div class="ct">🌾 Ingredientes</div><div class="ings" id="inglist"></div></div>
+      <div class="card" id="fcard"><div class="ct">🧬 Fermentación</div><div id="fcontent"></div></div>
+    </div>
+    <div class="mc">
+      <div class="srow" id="statsrow"></div>
+      <div class="sc" id="stepsc"></div>
+      <div id="tipssec"></div>
+      <div class="jcard">
+        <div class="jhead">
+          <h3>✍️ Diario de Intentos</h3>
+          <div class="jtabs">
+            <button class="jt on" onclick="setJT('all',this)">Todo</button>
+            <button class="jt" onclick="setJT('past',this)">Resultados</button>
+            <button class="jt" onclick="setJT('next',this)">Próximos</button>
+          </div>
+        </div>
+        <div class="jbody">
+          <div class="jentries" id="jentries"></div>
+          <div class="jform">
+            <div class="etrow">
+              <button class="etb on" onclick="setET('past',this)">📋 Resultado</button>
+              <button class="etb" onclick="setET('next',this)">🎯 Próximo</button>
+              <button class="etb" onclick="setET('idea',this)">💡 Idea</button>
+            </div>
+            <div class="scorerow" id="scorerow">
+              Nota:
+              <button class="sstar" onclick="setIS(1)">★</button>
+              <button class="sstar" onclick="setIS(2)">★</button>
+              <button class="sstar" onclick="setIS(3)">★</button>
+              <button class="sstar" onclick="setIS(4)">★</button>
+              <button class="sstar" onclick="setIS(5)">★</button>
+            </div>
+            <textarea class="jta" id="jtxt" placeholder="Escribe aquí tus notas..."></textarea>
+            <div class="photrow">
+              <label class="plbl">📷 Añadir foto<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)"></label>
+              <img class="pprev" id="pprev" alt="">
+              <span id="pname" style="font-size:10px;color:var(--ink-f)"></span>
+            </div>
+            <div class="frow2">
+              <button class="btnp" onclick="addE()">Añadir nota</button>
+              <button class="btns" onclick="clearSt()">Reiniciar pasos</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK -->
+<div class="view" id="v-week">
+  <div class="week-hd">
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(-1)">← Anterior</button>
+      <div class="wrange" id="wrange"></div>
+      <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(1)">Siguiente →</button>
+    </div>
+    <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(0)">Hoy</button>
+  </div>
+  <div class="wgrid" id="wgrid"></div>
+  <div class="card" style="margin-top:12px">
+    <div class="ct">🗓 Resumen de la Semana</div>
+    <div id="wplan" style="font-size:13px;line-height:2.1;color:var(--ink-m)"></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="view" id="v-history">
+  <h2 style="font-family:var(--font-d);font-size:21px;margin-bottom:13px">🏆 Historial de Hornadas</h2>
+  <div class="schart"><div class="ct">📈 Evolución de Notas</div><div class="cbars" id="cbars"></div></div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-all" onclick="setHF('all')">Todo</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-baguette" onclick="setHF('baguette')">🥖 Baguette</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-pizza" onclick="setHF('pizza')">🍕 Pizza</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-coca" onclick="setHF('coca')">🫓 Pa de Coca</button>
+  </div>
+  <div class="hgrid" id="hgrid"></div>
+</div>
+
+<!-- SHOPPING -->
+<div class="view" id="v-shopping">
+  <h2 style="font-family:var(--font-d);font-size:21px;margin-bottom:13px">🛒 Lista de Compra</h2>
+  <div class="slayout">
+    <div id="plancards"></div>
+    <div id="slcont"><div class="empty"><div class="ei">🛒</div><div style="font-family:var(--font-d);font-size:17px;margin-bottom:5px">Planifica tu semana</div><div style="font-size:13px">Selecciona las recetas que harás.</div></div></div>
+  </div>
+</div>
+
+</div>
+
+<!-- TIMER -->
+<div class="tpanel" id="tpanel">
+  <button class="tpcl" onclick="closeT()">✕</button>
+  <div class="tptitle">⏱ Temporizador</div>
+  <div class="tpname" id="tpname"></div>
+  <div class="tpclock" id="tpclock">00:00</div>
+  <div class="tpsub" id="tpsub"></div>
+  <div class="tpbtns">
+    <button class="tpb tpstart" id="tpsbtn" onclick="tToggle()">▶ Iniciar</button>
+    <button class="tpb tpreset" onclick="tReset()">↺ Reset</button>
+  </div>
+</div>
+
+<div class="overlay" id="mshare">
+  <div class="modal">
+    <div class="mh"><h3>🔗 Compartir</h3><button class="mcl" onclick="closeM('mshare')">✕</button></div>
+    <div class="mb">
+      <p style="font-size:13px;color:var(--ink-m);margin-bottom:9px">Comparte este enlace:</p>
+      <div style="display:flex;gap:7px">
+        <input id="surl" type="text" value="" style="flex:1;border:1.5px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:12px;font-family:var(--font-m)" readonly>
+        <button class="btnp" onclick="cpUrl()">Copiar</button>
+      </div>
+      <p style="margin-top:11px;font-size:11px;color:var(--ink-f);font-style:italic">Notas y fotos guardadas localmente en este navegador.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════ DATA ══════════════
+const R={
+baguette:{id:'baguette',name:'Baguette Tradition',sub:'Tradición francesa · 60h',icon:'🥖',
+  db:1,unit:'horneada',
+  ings:[
+    {s:'Masa base',items:[{n:'Harina T65 Bagatelle',q:1000,u:'g',note:'Fuerza francesa'},{n:'Agua filtrada',q:700,u:'ml',note:'Fría de nevera'},{n:'Sal sin iodo',q:20,u:'g'},{n:'Levadura Saf-Instant Red',q:3,u:'g'}]},
+    {s:'Fermentación',items:[{n:'Masa vieja (pâte fermentée)',q:200,u:'g',note:'Del jueves anterior'}]},
+  ],
+  bn:'~3 baguettes de 350g. Hidratación 70%.',
+  ft:{autolyse:60,proof:30},
+  steps:[
+    {t:'Temperar agua y preparar',w:'Jue 15:00',temp:'18–20°C',a:'Saca el agua de la nevera a la botella SodaStream. Saca la levadura y la masa vieja para atemperar.',tip:'El agua debe perder el frío extremo para no adormecer la levadura.',tm:null},
+    {t:'Autólisis',w:'Jue 17:00',temp:'18–20°C agua',a:'Mezcla harina + agua con el batidor TEEVEA. Reposo 1 hora estricta.',tip:'No amases; la elasticidad se crea sola. El gluten se organiza por sí mismo.',tm:60},
+    {t:'Integrar masa vieja',w:'Jue 19:00',temp:'Ambiente',a:'Añade la masa vieja troceada (200g del finde pasado) a la autólisis.',tip:null,tm:null},
+    {t:'Mezcla final — Ooni Spiral Halo',w:'Jue 19:00',temp:'Masa 23–24°C',a:'Añade levadura y sal. Usa el Ooni Spiral Halo solo hasta que sea homogénea — para antes de lo habitual. Verifica con el TP19H.',tip:'Reposado de Oro: Saca la masa, déjala 10–15 min tapada. Las proteínas se relajan y el S&F funciona 10× mejor.',tm:10},
+    {t:'⚡ Extraer masa vieja para próxima semana',w:'Jue 20:15',temp:'Inmediato',a:'Corta exactamente 200g. Guárdalos en un bote. Déjalos 45 min a temperatura ambiente antes de la nevera.',tip:'Este es el secreto de la continuidad. Dará sabor a nuez y trigo caramelizado la semana siguiente.',tm:45},
+    {t:'Pliegues — Stretch & Fold',w:'Jue 20:30',temp:'Ambiente',a:'3 series de pliegues cada 20 minutos. Moja las manos antes de cada serie.',tip:'Atrapa aire sin sacar el gas para crear los grandes agujeros de miga.',tm:20},
+    {t:'Frío — Fermentación lenta',w:'Jue 21:30',temp:'Nevera 4–6°C',a:'Guarda bien tapado hasta sábado o domingo. Mínimo 36h, máximo 72h.',tip:'El frío desarrolla el sabor a nuez y trigo caramelizado. No hay atajos.',tm:null},
+    {t:'Formado',w:'Sáb 06:30',temp:'Masa fría',a:'Divide en piezas de ~350g. Da forma de cilindro alargado con tensión.',tip:'Toca lo mínimo posible. Si la masa se calienta, se pega y pierde el aire.',tm:null},
+    {t:'Corte con Cuchilla Saint Germain',w:'Sáb 07:30',temp:'Masa fría',a:'Humedece la superficie. 5 cortes solapados a ~30° con la cuchilla.',tip:'Cortes casi verticales — el ángulo crea el greñado perfecto.',tm:null},
+    {t:'Precalentar horno + molde Emile Henry',w:'Sáb 07:30',temp:'250°C / 480°F',a:'Calienta el horno con el molde Emile Henry dentro durante 30 min mínimo.',tip:null,tm:30},
+    {t:'Horneado Fase 1 — con tapa',w:'Sáb 07:35',temp:'250°C / 480°F',a:'Coloca la baguette en el molde caliente. CON TAPA durante 15 minutos.',tip:'El vapor atrapado crea la costra brillante y el greñado espectacular.',tm:15},
+    {t:'Horneado Fase 2 — sin tapa',w:'Sáb 07:50',temp:'250°C / 480°F',a:'Quita la tapa. Hornea hasta que el TempSpike marque exactamente 95°C / 203°F internos.',tip:null,tm:20},
+    {t:'Enfriamiento — el paso más ignorado',w:'Sáb ~08:05',temp:'Descenso gradual',a:'Coloca en la Rejilla Checkered Chef. Espera mínimo 45 min antes de cortar.',tip:'El pan termina de cocerse con su vapor interno. Cortarlo antes destruye la miga.',tm:45},
+  ],
+  tips:['Usar el Ooni Spiral Halo solo para integración inicial — para antes de lo habitual.','Reposado de Oro: 10–15 min tapada después de la máquina. El S&F funciona perfectamente después.','La Prueba de la Ventana: la membrana debe ser tan fina que se pueda leer el periódico a través de ella.','Separar la masa del jueves en dos boles: uno para sábado y otro para domingo.'],
+  seedJ:[{type:'past',date:'Semana pasada',text:'Salió bien pero no acabé de gestionar las cantidades entre sábado y domingo.',score:3,photo:null,id:1},{type:'next',date:'Próxima semana',text:'Separar la masa del jueves en dos boles. Usar la máquina solo para integración.',score:null,photo:null,id:2},{type:'idea',date:'Idea futura',text:'Hacer masa directamente en media bandeja para probar focaccia con la misma receta.',score:null,photo:null,id:3}],
+  we:[{day:4,time:'15:00',step:'Temperar agua'},{day:4,time:'17:00',step:'Autólisis (1h)'},{day:4,time:'19:00',step:'Mezcla final + starter'},{day:4,time:'20:30',step:'Pliegues (3 series)'},{day:4,time:'21:30',step:'→ Nevera 48h'},{day:6,time:'06:30',step:'Formado'},{day:6,time:'07:30',step:'Corte + Horno'},{day:6,time:'08:00',step:'Enfriamiento 45min'}]
+},
+pizza:{id:'pizza',name:'Pizza Napolitana',sub:'Poolish · Horno Ooni',icon:'🍕',
+  db:4,unit:'bolas',hs:true,sizes:['26cm','28cm','30cm','33cm'],ds:'30cm',
+  ings:[
+    {s:'Poolish (viernes)',items:[{n:'Harina Nuvola / 00',q:300,u:'g',note:'Para el poolish'},{n:'Agua (poolish)',q:300,u:'ml'},{n:'Levadura Saf-Instant Red',q:1.5,u:'g',note:'Del congelador'}]},
+    {s:'Masa final (sábado)',items:[{n:'Harina adicional',q:700,u:'g'},{n:'Agua fría',q:420,u:'ml',note:'Compensa calor'},{n:'Sal',q:30,u:'g'}]},
+    {s:'Para estirar',items:[{n:'Semola di grano duro rimacinata',q:50,u:'g',note:'Clave del deslizamiento'}]},
+  ],
+  bn:'1 bola = 260–270g. Hidratación total ~72%.',
+  ft:{autolyse:20,proof:240},
+  steps:[
+    {t:'Temperar agua y levadura',w:'Vie 18:00',temp:'18–20°C',a:'Saca el agua de la nevera. Saca la levadura del congelador.',tip:'El agua debe perder el frío extremo para no adormecer la levadura.',tm:null},
+    {t:'Hacer el Poolish',w:'Vie 20:00',temp:'18–20°C',a:'Mezcla 300g harina + 300ml agua + 1.5g levadura. Bate hasta que no haya grumos.',tip:'El poolish fermenta en frío toda la noche y es el secreto del sabor napolitano.',tm:null},
+    {t:'Nevera — poolish fermenta',w:'Vie 21:00',temp:'Nevera 4–6°C',a:'Pon el poolish en la nevera bien tapado. Fermenta 11–12 horas.',tip:null,tm:null},
+    {t:'Mezcla con Ooni Spiral Halo',w:'Sáb 08:30',temp:'Masa 23–24°C',a:'Poolish + agua fría en bol. Disuelve ligeramente. Añade harina. Máquina 4 min velocidad baja.',tip:'Agua fría para compensar el calor del amasado.',tm:4},
+    {t:'Autólisis',w:'Sáb 08:30',temp:'Ambiente',a:'Deja descansar la masa 20 minutos tapada.',tip:null,tm:20},
+    {t:'Slap & Fold + Reposado de Oro',w:'Sáb 08:50',temp:'Ambiente',a:'Slap & Fold enérgico. Luego tapa con el bol y espera 10 minutos exactos.',tip:'En esos 10 min las proteínas se relajan. Verás una membrana translúcida como papel.',tm:10},
+    {t:'Sal + Pliegues',w:'Sáb 09:00',temp:'Ambiente',a:'Añade la sal. Pliegues: 3 series cada 20 min. Con más energía que con el pan.',tip:'Moja las manos. La pizza napolitana necesita más fuerza que el pan.',tm:20},
+    {t:'Boleado — dividir en bolas',w:'Sáb 10:00',temp:'Ambiente',a:'Divide inmediatamente en bolas de 260–270g. Bolea con tensión. Cada una en su tupper.',tip:null,tm:null},
+    {t:'Appretto — fermentación final',w:'Sáb 10:00–14:00',temp:'Temperatura ambiente',a:'Bolas en tuppers individuales a temperatura ambiente durante 4 horas.',tip:'La Nuvola con poolish es muy activa. Vigila que no sobrefermenten — especialmente si supera 24°C.',tm:240},
+    {t:'Precalentar Ooni',w:'Sáb ~13:30',temp:'Piedra: 430°C',a:'Enciende el Ooni 30–40 min antes. La piedra debe llegar a 430°C.',tip:'Con 72% hidratación: piedra a 400–430°C. A 500°C la base se quema antes de evaporar el agua.',tm:35},
+    {t:'Estirar con semolina',w:'Sáb 14:00',temp:'Ambiente',a:'Estira sobre semola di grano duro rimacinata. La pizza deslizará perfectamente a la piedra.',tip:null,tm:null},
+    {t:'Hornear en Ooni',w:'Sáb 14:05',temp:'430°C piedra',a:'Lanza la pizza. Gas al máximo. En cuanto el borde suba (20–30 seg), BAJA EL GAS AL MÍNIMO. Gira cada 20 seg.',tip:'La llama baja al final: el calor residual de la piedra cocina el centro húmedo.',tm:2},
+  ],
+  tips:['Gestión del calor: piedra a 400–430°C, NO 500°C con 72% hidratación.','Gas al máximo para subir el borde, luego al mínimo para el centro.','Girar cada 20 segundos para dorado uniforme.','Semola di grano duro rimacinata para estirar — deslizamiento perfecto a la piedra.'],
+  seedJ:[{type:'next',date:'Próxima vez',text:'La mezcla cogió consistencia pero estaba densa al hornear. Dejar 1h de reposo post-appretto.',score:null,photo:null,id:10},{type:'idea',date:'Idea',text:'Probar masa directa sin poolish para comparar sabor.',score:null,photo:null,id:11}],
+  we:[{day:5,time:'18:00',step:'Temperar agua'},{day:5,time:'20:00',step:'Hacer poolish'},{day:5,time:'21:00',step:'→ Nevera poolish'},{day:6,time:'08:30',step:'Mezcla + Autólisis'},{day:6,time:'09:00',step:'Sal + Pliegues'},{day:6,time:'10:00',step:'Boleado → Appretto 4h'},{day:6,time:'13:30',step:'Precalentar Ooni'},{day:6,time:'14:00',step:'Hornear pizzas'}]
+},
+coca:{id:'coca',name:'Pa de Coca',sub:'Focaccia catalana · nevera',icon:'🫓',
+  db:1,unit:'coca',
+  ings:[
+    {s:'Masa',items:[{n:'Harina Bagatelle',q:400,u:'g'},{n:'Agua (autólisis)',q:300,u:'ml',note:'Primera hidratación'},{n:'Agua bassinage',q:100,u:'ml',note:'Añadir poco a poco'},{n:'Sal sin iodo',q:6,u:'g'},{n:'Levadura Saf-Instant Red',q:1,u:'g'},{n:'Levain semana anterior',q:60,u:'g'}]},
+    {s:'Opcional',items:[{n:'Parmesano en polvo',q:30,u:'g',note:'Últimos 5 min'},{n:'Aceite de oliva',q:40,u:'ml',note:'Para la bandeja'}]},
+  ],
+  bn:'1 bandeja entera. Hidratación ~80%.',
+  ft:{autolyse:60,proof:60},
+  steps:[
+    {t:'Autólisis — solo con primera agua',w:'Jue 17:00',temp:'18–20°C',a:'Mezcla 400g harina + 300ml agua ÚNICAMENTE. Sin levadura ni sal. Reposo 1 hora.',tip:'A diferencia de la baguette, la coca solo hace autólisis con los primeros 300ml.',tm:60},
+    {t:'Añadir levain + levadura + sal',w:'Jue 19:00',temp:'Ambiente',a:'Añade el levain de la semana anterior, la levadura y la sal. Empieza a amasar.',tip:null,tm:null},
+    {t:'Bassinage — agua restante',w:'Jue 19:00',temp:'Masa 23–24°C',a:'Con el Ooni Spiral Halo, añade los 100ml restantes MUY poco a poco mientras la máquina trabaja.',tip:'El bassinage añade agua a una masa ya desarrollada. Ve despacio — deja que absorba antes de añadir más.',tm:null},
+    {t:'Pliegues',w:'Jue 20:15',temp:'Ambiente',a:'3 series de pliegues cada 20 minutos.',tip:null,tm:20},
+    {t:'Nevera — fermentación lenta',w:'Jue 21:30',temp:'Nevera 4–6°C',a:'Tapa bien y a la nevera hasta sábado o domingo.',tip:null,tm:null},
+    {t:'Reposo post-nevera — CLAVE',w:'Sáb mañana',temp:'Temperatura ambiente',a:'Saca de la nevera y deja 1 hora de reposo ANTES de extender en la bandeja.',tip:'La coca anterior salió densa porque se sacó directamente de la nevera. Esta hora es OBLIGATORIA.',tm:60},
+    {t:'Extender en bandeja',w:'1h después',temp:'Ambiente',a:'Aceita generosamente la bandeja. Extiende la masa con los dedos. No presiones en exceso.',tip:'Prueba con media bandeja para comparar grosor.',tm:null},
+    {t:'Horneado',w:'A continuación',temp:'250°C / 480°F',a:'Horno bien caliente. Hornea hasta que la superficie esté dorada y crujiente. Parmesano los últimos 5 min si usas.',tip:'El parmesano en polvo está pendiente de probar — puede ser una gran combinación con el aceite.',tm:25},
+  ],
+  tips:['La hora de reposo post-nevera es OBLIGATORIA — sin ella la miga queda densa.','Bassinage: añadir el agua extra muy despacio desarrolla textura más abierta.','Prueba: parmesano en polvo encima los últimos 5 minutos.'],
+  seedJ:[{type:'past',date:'Semana pasada',text:'La mezcla cogió consistencia pero estaba bastante densa al hornear, sacándola directamente de la nevera.',score:2,photo:null,id:20},{type:'next',date:'Próxima vez',text:'Dejar 1 hora de reposo después de sacar de la nevera. 400g harina, empezar con 300ml.',score:null,photo:null,id:21},{type:'idea',date:'Idea',text:'¿Parmesano en polvo encima? Podría ser una gran combinación con el aceite de oliva.',score:null,photo:null,id:22}],
+  we:[{day:4,time:'17:00',step:'Autólisis (1h)'},{day:4,time:'19:00',step:'Levain+Levadura+Bassinage'},{day:4,time:'20:15',step:'Pliegues'},{day:4,time:'21:30',step:'→ Nevera'},{day:6,time:'09:00',step:'Reposo 1h (post-nevera)'},{day:6,time:'10:00',step:'Extender + Hornear'}]
+}
+};
+
+// ══════════════ STATE ══════════════
+let S={
+  r:'baguette',view:'recipe',
+  jt:'all',et:'past',is:null,
+  b:{baguette:1,pizza:4,coca:1},
+  sz:{pizza:'30cm'},
+  st:{baguette:{},pizza:{},coca:{}},
+  j:{baguette:null,pizza:null,coca:null},
+  sh:{baguette:{pl:false,q:1},pizza:{pl:false,q:4},coca:{pl:false,q:1}},
+  slck:{},
+  kt:22,wo:0,hf:'all',pp:null
+};
+function ld(){
+  try{const d=JSON.parse(localStorage.getItem('pan-v2')||'null');if(d)Object.assign(S,d);}catch(e){}
+  Object.keys(R).forEach(id=>{
+    if(!S.j[id]||!Array.isArray(S.j[id]))S.j[id]=R[id].seedJ.map(e=>({...e}));
+    if(!S.st[id])S.st[id]={};
+    if(!S.sh[id])S.sh[id]={pl:false,q:R[id].db};
+  });
+}
+function sv(){const d={...S,pp:null};localStorage.setItem('pan-v2',JSON.stringify(d));}
+
+// ══════════════ NAV ══════════════
+function gv(v){
+  S.view=v;
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));
+  document.getElementById('v-'+v).classList.add('on');
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>{
+    if((v==='recipe'&&b.textContent.includes('Recetas'))||(v==='week'&&b.textContent.includes('Semana'))||
+       (v==='history'&&b.textContent.includes('Historial'))||(v==='shopping'&&b.textContent.includes('Compra')))
+      b.classList.add('on');
+  });
+  if(v==='shopping')rShop();
+  if(v==='week')rWeek();
+  if(v==='history')rHist();
+  sv();
+}
+
+// ══════════════ TEMPERATURE ══════════════
+function upTemp(){
+  S.kt=parseInt(document.getElementById('kt').value)||22;
+  const b=document.getElementById('tbadge');
+  if(S.kt<=18){b.textContent='Fresca';b.className='tbg tc';}
+  else if(S.kt<=24){b.textContent='Normal';b.className='tbg tw-warm';}
+  else{b.textContent='Caliente';b.className='tbg th';}
+  rFerm();sv();
+}
+function fadj(base){return Math.round(base*Math.pow(0.88,S.kt-22));}
+function rFerm(){
+  const r=R[S.r];const ft=r.ft;const t=S.kt;let h='';
+  if(ft.autolyse){const a=fadj(ft.autolyse);
+    h+=`<div class="frow"><span class="flbl">Autólisis base</span><span class="fval">${ft.autolyse}min</span></div>`;
+    if(a!==ft.autolyse)h+=`<div class="frow"><span class="flbl">→ A ${t}°C</span><span class="fval" style="color:${a<ft.autolyse?'var(--rust)':'var(--blue)'}">${a}min</span></div>`;}
+  if(ft.proof){const label=r.id==='pizza'?'Appretto':'Reposo post-nevera';const a=fadj(ft.proof);
+    h+=`<div class="frow" style="margin-top:5px"><span class="flbl">${label} base</span><span class="fval">${ft.proof}min</span></div>`;
+    if(a!==ft.proof)h+=`<div class="frow"><span class="flbl">→ A ${t}°C</span><span class="fval" style="color:${a<ft.proof?'var(--rust)':'var(--blue)'}">${a}min</span></div>`;}
+  if(t>25)h+=`<div class="fwarn">⚠ Fermentación muy activa. Vigila y reduce tiempos.</div>`;
+  if(t<18)h+=`<div class="fwarn">🥶 Fermentación lenta. Puede necesitar más tiempo.</div>`;
+  document.getElementById('fcontent').innerHTML=`<div class="fbox"><div class="ftitle">Tiempos a ${t}°C</div>${h}</div>`;
+}
+
+// ══════════════ TABS ══════════════
+function rTabs(){
+  document.getElementById('rtabs').innerHTML=Object.values(R).map(r=>`
+    <div class="rtab ${S.r===r.id?'on':''}" onclick="selR('${r.id}')">
+      <div class="rtab-icon">${r.icon}</div>
+      <div><div class="rtab-n">${r.name}</div><div class="rtab-s">${r.sub}</div></div>
+    </div>`).join('');
+}
+function selR(id){S.r=id;rAll();sv();}
+
+// ══════════════ BATCH ══════════════
+function rBatch(){
+  const r=R[S.r];const b=S.b[S.r];
+  let h=`<div class="brow"><span class="bl">${r.unit.charAt(0).toUpperCase()+r.unit.slice(1)}s</span>
+    <div class="qc"><button class="qb" onclick="chB(-1)">−</button>
+    <input class="qi" type="number" value="${b}" min="1" max="20" onchange="setB(this.value)">
+    <button class="qb" onclick="chB(1)">+</button></div></div>
+    <div style="font-size:10px;color:var(--ink-f);font-style:italic;margin-bottom:7px">${r.bn}</div>`;
+  if(r.hs){h+=`<div style="font-size:11px;color:var(--ink-m);margin-bottom:3px">Tamaño</div><div class="szbtns">${r.sizes.map(s=>`<button class="szb ${(S.sz[r.id]||r.ds)===s?'on':''}" onclick="setSz('${s}')">${s}</button>`).join('')}</div>`;}
+  document.getElementById('bctrl').innerHTML=h;
+}
+function chB(d){S.b[S.r]=Math.max(1,Math.min(20,S.b[S.r]+d));rBatch();rIngs();sv();}
+function setB(v){S.b[S.r]=Math.max(1,Math.min(20,parseInt(v)||1));rIngs();sv();}
+function setSz(s){S.sz[S.r]=s;rBatch();sv();}
+
+// ══════════════ INGREDIENTS ══════════════
+function fq(q,m){const v=q*m;return v<10?parseFloat(v.toFixed(1))+'':Math.round(v).toLocaleString('es');}
+function rIngs(){
+  const r=R[S.r];const m=S.b[S.r]/r.db;let h='';
+  r.ings.forEach(sec=>{
+    h+=`<div class="isec">${sec.s}</div>`;
+    sec.items.forEach(it=>{h+=`<div class="irow"><div><div class="in">${it.n}</div>${it.note?`<div class="inote">${it.note}</div>`:''}</div><div class="iq">${fq(it.q,m)}${it.u}</div></div>`;});
+  });
+  document.getElementById('inglist').innerHTML=h;
+}
+
+// ══════════════ STEPS ══════════════
+function rSteps(){
+  const r=R[S.r];const done=Object.values(S.st[S.r]||{}).filter(Boolean).length;const tot=r.steps.length;
+  document.getElementById('statsrow').innerHTML=`
+    <div class="chip">📋 <strong>${tot}</strong> pasos</div>
+    <div class="chip">✅ <strong>${done}/${tot}</strong></div>
+    <div class="chip" style="flex:1;gap:7px"><span style="font-size:10px;color:var(--ink-f)">${Math.round(done/tot*100)}%</span>
+    <div class="prog"><div class="pf" style="width:${done/tot*100}%"></div></div></div>`;
+  let h='';
+  r.steps.forEach((st,i)=>{
+    const dn=!!(S.st[S.r]||{})[i];
+    const tl=st.tm?(st.tm>=60?Math.floor(st.tm/60)+'h'+(st.tm%60?st.tm%60+'min':''):st.tm+'min'):'';
+    h+=`<div class="step ${dn?'done':''}" id="sp${i}">
+      <div class="sh" onclick="tgSB(${i})">
+        <div class="snum">${dn?'✓':i+1}</div>
+        <div class="stg"><div class="stitle">${st.t}</div>
+        <div class="smeta">${st.w?`<span>🕐 ${st.w}</span>`:''}${st.temp?`<span>🌡 ${st.temp}</span>`:''}</div></div>
+        <div class="sacts">
+          ${st.tm?`<button class="tbtn" id="tbtn${i}" onclick="event.stopPropagation();opT(${i})">⏱ ${tl}</button>`:''}
+          <div class="sck" onclick="event.stopPropagation();tgDn(${i})">${dn?'✓':''}</div>
+        </div>
+      </div>
+      <div class="sb" id="sb${i}"><div class="sact">${st.a}</div>${st.tip?`<div class="stip">${st.tip}</div>`:''}</div>
+    </div>`;
+  });
+  document.getElementById('stepsc').innerHTML=h;
+  document.getElementById('tipssec').innerHTML=`<div class="tcard"><div class="ct">⚡ Claves del Maestro</div>${r.tips.map(t=>`<div class="ti2">${t}</div>`).join('')}</div>`;
+}
+function tgSB(i){document.getElementById('sb'+i).classList.toggle('open');}
+function tgDn(i){const id=S.r;if(!S.st[id])S.st[id]={};S.st[id][i]=!S.st[id][i];rSteps();sv();}
+function clearSt(){S.st[S.r]={};rSteps();sv();}
+
+// ══════════════ TIMER ══════════════
+let T={idx:-1,tot:0,rem:0,run:false,iv:null};
+function opT(i){
+  const st=R[S.r].steps[i];if(!st.tm)return;
+  T.idx=i;T.tot=st.tm*60;if(!T.run)T.rem=st.tm*60;
+  document.getElementById('tpname').textContent=st.t;
+  document.getElementById('tpanel').classList.add('open');
+  updT();
+}
+function closeT(){document.getElementById('tpanel').classList.remove('open');}
+function tToggle(){
+  if(T.run){clearInterval(T.iv);T.run=false;
+    document.getElementById('tpsbtn').textContent='▶ Continuar';document.getElementById('tpsbtn').className='tpb tpstart';
+    document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('run'));
+  }else{T.run=true;
+    document.getElementById('tpsbtn').textContent='⏸ Pausar';document.getElementById('tpsbtn').className='tpb tppause';
+    const btn=document.getElementById('tbtn'+T.idx);if(btn)btn.classList.add('run');
+    T.iv=setInterval(()=>{T.rem--;updT();if(T.rem<=0){clearInterval(T.iv);T.run=false;tDone();}},1000);
+  }
+}
+function tReset(){clearInterval(T.iv);T.run=false;T.rem=T.tot;document.getElementById('tpsbtn').textContent='▶ Iniciar';document.getElementById('tpsbtn').className='tpb tpstart';document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('run'));updT();}
+function updT(){
+  const m=Math.floor(T.rem/60),s=T.rem%60;
+  const cl=document.getElementById('tpclock');
+  cl.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  cl.className='tpclock'+(T.rem<=60&&T.rem>0?' warn':T.rem<=0?' fin':'');
+  const pct=T.tot>0?Math.round((1-T.rem/T.tot)*100):0;
+  document.getElementById('tpsub').textContent=T.run?`${pct}% — quedan ${m}m ${s}s`:'';
+}
+function tDone(){
+  document.getElementById('tpsbtn').textContent='✓ Terminado';document.getElementById('tpsbtn').className='tpb tpstart';
+  const f=document.createElement('div');f.className='tflash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);
+  if('Notification'in window&&Notification.permission==='granted')new Notification('⏱ Terminado',{body:R[S.r].steps[T.idx].t+' — ¡Listo!'});
+  else if(Notification.permission!=='denied')Notification.requestPermission();
+}
+
+// ══════════════ JOURNAL ══════════════
+function setJT(t,b){S.jt=t;document.querySelectorAll('.jt').forEach(x=>x.classList.remove('on'));b.classList.add('on');rJ();}
+function setET(t,b){S.et=t;document.querySelectorAll('.etb').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('scorerow').style.display=(t==='past'?'flex':'none');}
+function setIS(n){S.is=S.is===n?null:n;document.querySelectorAll('#scorerow .sstar').forEach((s,i)=>s.classList.toggle('on',S.is!==null&&i<S.is));}
+function prevPhoto(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=e=>{S.pp=e.target.result;const img=document.getElementById('pprev');img.src=e.target.result;img.style.display='block';document.getElementById('pname').textContent=f.name;};rd.readAsDataURL(f);}
+function addE(){
+  const txt=document.getElementById('jtxt').value.trim();if(!txt)return;
+  const now=new Date();const date=now.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+  S.j[S.r].unshift({type:S.et,date,text:txt,score:S.et==='past'?S.is:null,photo:S.pp,id:Date.now()});
+  document.getElementById('jtxt').value='';S.pp=null;S.is=null;
+  document.getElementById('pprev').style.display='none';document.getElementById('pname').textContent='';document.getElementById('pfile').value='';
+  document.querySelectorAll('#scorerow .sstar').forEach(s=>s.classList.remove('on'));
+  rJ();sv();
+}
+function delE(rid,eid){S.j[rid]=S.j[rid].filter(e=>e.id!==eid);rJ();sv();}
+function rJ(){
+  const es=S.j[S.r]||[];const fl=S.jt==='all'?es:es.filter(e=>e.type===S.jt);
+  const tp={past:{lb:'Resultado',c:'bp',ec:'past'},next:{lb:'Próximo',c:'bn',ec:'next'},idea:{lb:'Idea',c:'bi',ec:'idea'}};
+  document.getElementById('jentries').innerHTML=fl.length===0
+    ?'<div style="text-align:center;color:var(--ink-f);font-style:italic;padding:18px;font-size:13px">Sin notas aún. ¡Empieza a registrar tus intentos!</div>'
+    :fl.map(e=>{const t=tp[e.type]||tp.idea;const stars=e.score?'★'.repeat(e.score)+'☆'.repeat(5-e.score):'';
+      return `<div class="entry ${t.ec}">
+        <button class="edel" onclick="delE('${S.r}',${e.id})">✕</button>
+        <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:''}</div>
+        <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="" loading="lazy"></div>`:''}
+      </div>`;
+    }).join('');
+}
+
+// ══════════════ HISTORY ══════════════
+function setHF(f){S.hf=f;document.querySelectorAll('[id^="hf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hf-'+f).classList.add('on');rHist();}
+function rHist(){
+  let all=[];
+  Object.keys(R).forEach(id=>(S.j[id]||[]).filter(e=>e.type==='past').forEach(e=>all.push({...e,rid:id,rname:R[id].name,icon:R[id].icon})));
+  const fl=S.hf==='all'?all:all.filter(e=>e.rid===S.hf);
+  const scored=all.filter(e=>e.score).slice(-10);
+  document.getElementById('cbars').innerHTML=scored.length===0
+    ?'<div style="color:var(--ink-f);font-style:italic;font-size:12px;align-self:center">Sin valoraciones aún</div>'
+    :scored.map(e=>`<div class="cbg"><div class="cscore">${'★'.repeat(e.score)}</div>
+      <div class="cbar" style="height:${e.score/5*75}px;background:${e.score>=4?'var(--sage)':e.score===3?'var(--gold)':'var(--rust)'}"></div>
+      <div class="clbl">${(e.date||'').split(' ').slice(1).join(' ')||'—'}</div></div>`).join('');
+  document.getElementById('hgrid').innerHTML=fl.length===0
+    ?'<div style="color:var(--ink-f);font-style:italic;padding:22px;font-size:13px">Sin hornadas registradas aún.</div>'
+    :fl.map(e=>`<div class="hcard">
+      <div class="hphoto">${e.photo?`<img src="${e.photo}" alt="">`:`${e.icon}`}</div>
+      <div class="hbody">
+        <span class="hrb">${e.icon} ${e.rname}</span>
+        <div class="hname">${e.text.substring(0,48)}${e.text.length>48?'…':''}</div>
+        <div class="hdate">${e.date||'Sin fecha'}</div>
+        <div class="hstars">${e.score?'★'.repeat(e.score).split('').map(()=>`<span class="hon">★</span>`).join('')+'★'.repeat(5-e.score).split('').map(()=>`<span class="hoff">★</span>`).join(''):'<span style="font-size:11px;color:var(--ink-f)">Sin valoración</span>'}</div>
+        <div class="htext">${e.text}</div>
+      </div></div>`).join('');
+}
+
+// ══════════════ WEEK ══════════════
+const DNAMES=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const DKEYS=[0,1,2,3,4,5,6];
+function cw(d){if(d===0)S.wo=0;else S.wo+=d;rWeek();sv();}
+function rWeek(){
+  const today=new Date();
+  const sw=new Date(today);sw.setDate(today.getDate()-today.getDay()+(S.wo*7));
+  const days=DKEYS.map(i=>{const d=new Date(sw);d.setDate(sw.getDate()+i);return d;});
+  document.getElementById('wrange').textContent=`${days[0].toLocaleDateString('es-ES',{day:'numeric',month:'short'})} — ${days[6].toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}`;
+  const epd={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  Object.values(R).forEach(r=>r.we.forEach(ev=>{epd[ev.day].push({...ev,rid:r.id,rname:r.name,icon:r.icon});}));
+  document.getElementById('wgrid').innerHTML=days.map((d,i)=>{
+    const isT=d.toDateString()===today.toDateString();
+    const evs=epd[i]||[];
+    return `<div class="dcol ${isT?'dtoday':''}">
+      <div class="dhead"><div class="dname">${DNAMES[i]}</div><div class="ddate">${d.getDate()}</div></div>
+      <div class="dbody">${evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)}" onclick="selR('${ev.rid}');gv('recipe')">
+        <div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+  let pl='';
+  days.forEach((d,i)=>{const evs=epd[i];if(evs.length)pl+=`<div><strong>${DNAMES[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' · ')}</div>`;});
+  document.getElementById('wplan').innerHTML=pl||'<em>Sin eventos esta semana.</em>';
+}
+
+// ══════════════ SHOPPING ══════════════
+function rShop(){
+  document.getElementById('plancards').innerHTML=Object.values(R).map(r=>{const pl=S.sh[r.id];
+    return `<div class="pcard ${pl.pl?'pl':''}" onclick="tgPl('${r.id}')">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+        <span style="font-size:20px">${r.icon}</span>
+        <div><div class="pcn">${r.name}</div><div class="pcs">${r.sub}</div></div>
+        <span style="margin-left:auto">${pl.pl?'✅':'⬜'}</span></div>
+      ${pl.pl?`<div class="brow" onclick="event.stopPropagation()"><span class="bl" style="font-size:11px">Cant:</span>
+        <div class="qc"><button class="qb" onclick="chPQ('${r.id}',-1)">−</button>
+        <input class="qi" type="number" value="${pl.q}" min="1" max="20" onchange="setPQ('${r.id}',this.value)">
+        <button class="qb" onclick="chPQ('${r.id}',1)">+</button></div></div>`:''}
+    </div>`;
+  }).join('');
+  const planned=Object.keys(S.sh).filter(id=>S.sh[id].pl);
+  if(!planned.length){document.getElementById('slcont').innerHTML='<div class="empty"><div class="ei">🛒</div><div style="font-family:var(--font-d);font-size:17px;margin-bottom:5px">Planifica tu semana</div><div style="font-size:13px">Selecciona las recetas que harás.</div></div>';return;}
+  const agg={};
+  planned.forEach(id=>{const r=R[id];const m=S.sh[id].q/r.db;
+    r.ings.forEach(sec=>sec.items.forEach(it=>{const k=it.n.toLowerCase();
+      if(!agg[k]){agg[k]={n:it.n,u:it.u,q:0,rs:[]};}
+      agg[k].q+=it.q*m;if(!agg[k].rs.includes(R[id].name))agg[k].rs.push(R[id].name);}));});
+  const cats={'🌾 Harinas':['harina','semola'],'🧬 Fermentos':['levadura','levain','masa vieja','parmesano'],'💧 Líquidos':['agua','aceite'],'🧂 Sal y especias':['sal'],'📦 Otros':[]};
+  const cm={};Object.keys(cats).forEach(c=>cm[c]=[]);
+  Object.values(agg).forEach(it=>{const nl=it.n.toLowerCase();let p=false;for(const[c,ks]of Object.entries(cats)){if(c==='📦 Otros')continue;if(ks.some(k=>nl.includes(k))){cm[c].push(it);p=true;break;}}if(!p)cm['📦 Otros'].push(it);});
+  let h=`<div class="slcard"><div class="slh"><h2>Lista de Compra</h2><button class="btnp" style="font-size:11px;padding:4px 10px" onclick="window.print()">🖨 Imprimir</button></div><div class="slbody">`;
+  let idx=0;
+  Object.entries(cm).forEach(([c,its])=>{if(!its.length)return;h+=`<div class="slct">${c}</div>`;its.forEach(it=>{const k='sl'+idx++;const ck=S.slck[k];h+=`<div class="sli ${ck?'ck':''}" onclick="tgSl('${k}')"><div class="slck">${ck?'✓':''}</div><div class="slin">${it.n}</div><div><div class="sliq">${fq(it.q,1)}${it.u}</div><div class="slir">${it.rs.join(', ')}</div></div></div>`;});});
+  h+='</div></div>';
+  document.getElementById('slcont').innerHTML=h;
+}
+function tgPl(id){S.sh[id].pl=!S.sh[id].pl;rShop();sv();}
+function chPQ(id,d){S.sh[id].q=Math.max(1,Math.min(20,S.sh[id].q+d));rShop();sv();}
+function setPQ(id,v){S.sh[id].q=Math.max(1,Math.min(20,parseInt(v)||1));sv();}
+function tgSl(k){S.slck[k]=!S.slck[k];rShop();sv();}
+
+// ══════════════ MODAL ══════════════
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function cpUrl(){document.getElementById('surl').value=window.location.href;const i=document.getElementById('surl');i.select();document.execCommand('copy');const b=event.target;b.textContent='✓ Copiado';setTimeout(()=>b.textContent='Copiar',2000);}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ══════════════ RENDER ALL ══════════════
+function rAll(){rTabs();rBatch();rIngs();rSteps();rFerm();rJ();}
+
+// ══════════════ INIT ══════════════
+ld();
+document.getElementById('kt').value=S.kt||22;
+upTemp();
+rAll();
+</script>
+</body>
+</html>
