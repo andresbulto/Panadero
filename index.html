@@ -32,12 +32,12 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .nb{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:5px 12px;border-radius:16px;font-size:12px;transition:all .15s}
 .nb:hover{background:rgba(255,255,255,.08);color:#fff}
 .nb.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
-.tw{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:22px;padding:6px 14px;flex-shrink:0;animation:tempPulse 3s ease-in-out infinite}
-@keyframes tempPulse{0%,100%{border-color:rgba(255,255,255,.25)}50%{border-color:rgba(255,255,255,.45)}}
-.tw label{font-size:16px;color:rgba(255,255,255,.7)}
-.ti{background:transparent;border:none;color:#fff;font-family:var(--font-m);font-size:18px;width:38px;text-align:center;font-weight:700}
+.tw{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.35);border-radius:26px;padding:8px 18px;flex-shrink:0;animation:tempPulse 3s ease-in-out infinite}
+@keyframes tempPulse{0%,100%{border-color:rgba(255,255,255,.35)}50%{border-color:rgba(255,255,255,.55)}}
+.tw label{font-size:22px;color:rgba(255,255,255,.85)}
+.ti{background:transparent;border:none;color:#fff;font-family:var(--font-m);font-size:26px;width:48px;text-align:center;font-weight:700}
 .ti:focus{outline:none}
-.tbg{font-size:11px;font-family:var(--font-m);padding:3px 9px;border-radius:10px;font-weight:700}
+.tbg{font-size:13px;font-family:var(--font-m);padding:4px 12px;border-radius:12px;font-weight:700}
 .tc{background:#dbeeff;color:#1a4a7a}.tw-warm{background:#ffeacc;color:#7a3a00}.th{background:#ffe0d0;color:#7a1a00}
 .lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;flex-shrink:0}
 .lang-btn:hover{background:rgba(255,255,255,.15);color:#fff}
@@ -302,7 +302,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
     </nav>
     <div class="tw">
       <label>🌡</label>
-      <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()">°C
+      <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()"><span style="color:#fff;font-size:20px;font-weight:700;font-family:var(--font-m)">°C</span>
       <span class="tbg tc" id="tbadge">Normal</span>
     </div>
     <button class="lang-btn" id="langbtn" onclick="toggleLang()">FR</button>
