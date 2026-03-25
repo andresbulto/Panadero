@@ -238,6 +238,10 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .dev.eb{border-color:var(--rust)}
 .dev.ep{border-color:var(--blue)}
 .dev.ec{border-color:var(--sage)}
+.dev.bake{background:var(--rust-bg);border-left:4px solid var(--rust);padding:7px 8px;font-size:12px}
+.dev.bake .devn{font-size:11px;color:var(--rust)}
+.dev.bake .devs{font-size:13px;font-weight:700;color:var(--ink)}
+.dev.bake .devt{font-size:10px;color:var(--rust)}
 .devn{font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
 .devs{color:var(--ink-m)}
 .devt{font-family:var(--font-m);font-size:9px;color:var(--ink-f)}
@@ -503,7 +507,7 @@ coca:{id:'coca',name:'Pa de Coca',sub:'Focaccia catalana · nevera',icon:'🫓',
   ],
   tips:['Autólisis con 200ml agua fría de nevera. Bassinage con 100ml agua fría o hielos en el Ooni.','La hora de reposo post-nevera es OBLIGATORIA — sin ella la miga queda densa.','Bassinage: añadir el agua extra muy despacio desarrolla textura más abierta.','Prueba: parmesano en polvo encima los últimos 5 minutos.'],
   seedJ:[{type:'past',date:'Semana pasada',text:'La mezcla cogió consistencia pero estaba bastante densa al hornear, sacándola directamente de la nevera.',score:2,photo:null,id:20},{type:'next',date:'Próxima vez',text:'Dejar 1 hora de reposo después de sacar de la nevera. 400g harina, empezar con 300ml.',score:null,photo:null,id:21},{type:'idea',date:'Idea',text:'¿Parmesano en polvo encima? Podría ser una gran combinación con el aceite de oliva.',score:null,photo:null,id:22}],
-  we:[{day:4,time:'17:00',step:'Autólisis agua fría (1h)'},{day:4,time:'19:00',step:'Levain+Levadura+Bassinage fría/hielos'},{day:4,time:'20:15',step:'Pliegues'},{day:4,time:'21:30',step:'→ Nevera'},{day:6,time:'09:00',step:'Reposo 1h (post-nevera)'},{day:6,time:'10:00',step:'Extender + Hornear'}]
+  we:[{day:4,time:'17:00',step:'Autólisis agua fría (1h)'},{day:4,time:'19:00',step:'Levain+Levadura+Bassinage fría/hielos'},{day:4,time:'20:15',step:'Pliegues'},{day:4,time:'21:30',step:'→ Nevera'},{day:6,time:'09:00',step:'Reposo 1h (post-nevera)'},{day:6,time:'10:00',step:'🔥 Hornear coca'}]
 }
 };
 
@@ -734,27 +738,31 @@ function rHist(){
 }
 
 // ══════════════ WEEK ══════════════
-const DNAMES=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-const DKEYS=[0,1,2,3,4,5,6];
+const DNAMES_EU=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const DKEYS_EU=[1,2,3,4,5,6,0];
 function cw(d){if(d===0)S.wo=0;else S.wo+=d;rWeek();sv();}
 function rWeek(){
   const today=new Date();
-  const sw=new Date(today);sw.setDate(today.getDate()-today.getDay()+(S.wo*7));
-  const days=DKEYS.map(i=>{const d=new Date(sw);d.setDate(sw.getDate()+i);return d;});
+  const dow=today.getDay();
+  const mondayOff=dow===0?-6:1-dow;
+  const sw=new Date(today);sw.setDate(today.getDate()+mondayOff+(S.wo*7));
+  const days=DKEYS_EU.map((_,i)=>{const d=new Date(sw);d.setDate(sw.getDate()+i);return d;});
   document.getElementById('wrange').textContent=`${days[0].toLocaleDateString('es-ES',{day:'numeric',month:'short'})} — ${days[6].toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}`;
   const epd={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
   Object.values(R).forEach(r=>r.we.forEach(ev=>{epd[ev.day].push({...ev,rid:r.id,rname:r.name,icon:r.icon});}));
   document.getElementById('wgrid').innerHTML=days.map((d,i)=>{
     const isT=d.toDateString()===today.toDateString();
-    const evs=epd[i]||[];
+    const jsDay=d.getDay();
+    const evs=epd[jsDay]||[];
+    const isBake=ev=>ev.step.includes('🔥');
     return `<div class="dcol ${isT?'dtoday':''}">
-      <div class="dhead"><div class="dname">${DNAMES[i]}</div><div class="ddate">${d.getDate()}</div></div>
-      <div class="dbody">${evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)}" onclick="selR('${ev.rid}');gv('recipe')">
+      <div class="dhead"><div class="dname">${DNAMES_EU[i]}</div><div class="ddate">${d.getDate()}</div></div>
+      <div class="dbody">${evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)} ${isBake(ev)?'bake':''}" onclick="selR('${ev.rid}');gv('recipe')">
         <div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join('')}</div>
     </div>`;
   }).join('');
   let pl='';
-  days.forEach((d,i)=>{const evs=epd[i];if(evs.length)pl+=`<div><strong>${DNAMES[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' · ')}</div>`;});
+  days.forEach((d,i)=>{const jsDay=d.getDay();const evs=epd[jsDay];if(evs.length)pl+=`<div><strong>${DNAMES_EU[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' · ')}</div>`;});
   document.getElementById('wplan').innerHTML=pl||'<em>Sin eventos esta semana.</em>';
 }
 
