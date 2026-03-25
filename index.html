@@ -114,6 +114,9 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .tbtn{background:var(--timer);border:none;color:#7dd3fc;border-radius:12px;padding:2px 8px;font-size:11px;font-family:var(--font-m);transition:all .14s;display:flex;align-items:center;gap:3px}
 .tbtn:hover{background:#243d51;color:#bae6fd}
 .tbtn.run{background:#0d3530;color:#6ee7b7;animation:pb 1.5s ease-in-out infinite}
+.tbtn .tadj{font-size:9px;opacity:.7;margin-left:2px}
+.ferm-badge{display:inline-block;background:#ffeacc;color:#7a3a00;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:5px;vertical-align:middle}
+.ferm-badge.cool{background:#dbeeff;color:#1a4a7a}
 @keyframes pb{0%,100%{box-shadow:0 0 0 0 rgba(110,231,183,.3)}50%{box-shadow:0 0 0 4px rgba(110,231,183,0)}}
 .sck{width:21px;height:21px;border-radius:50%;border:2px solid var(--bdrS);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;background:#fff;flex-shrink:0;transition:all .13s}
 .sck:hover{border-color:var(--sage);color:var(--sage)}
@@ -436,10 +439,10 @@ baguette:{id:'baguette',name:'Baguette Tradition',sub:'Tradición francesa · 60
   ft:{autolyse:60,proof:30},
   steps:[
     {t:'Temperar agua y preparar',w:'Jue 15:00',temp:'18–20°C',a:'Saca el agua de la nevera a la botella SodaStream. Saca la levadura y la masa vieja para atemperar.',tip:'El agua debe perder el frío extremo para no adormecer la levadura.',tm:null},
-    {t:'Autólisis',w:'Jue 17:00',temp:'18–20°C agua',a:'Mezcla harina + agua con el batidor TEEVEA. Reposo 1 hora estricta.',tip:'No amases; la elasticidad se crea sola. El gluten se organiza por sí mismo.',tm:60},
+    {t:'Autólisis',w:'Jue 17:00',temp:'18–20°C agua',a:'Mezcla harina + agua con el batidor TEEVEA. Reposo 1 hora estricta.',tip:'No amases; la elasticidad se crea sola. El gluten se organiza por sí mismo.',tm:60,ferm:true},
     {t:'Integrar masa vieja',w:'Jue 19:00',temp:'Ambiente',a:'Añade la masa vieja troceada (200g del finde pasado) a la autólisis.',tip:null,tm:null},
     {t:'Mezcla final — Ooni Spiral Halo',w:'Jue 19:00',temp:'Masa 23–24°C',a:'Añade levadura y sal. Usa el Ooni Spiral Halo solo hasta que sea homogénea — para antes de lo habitual. Verifica con el TP19H.',tip:'Reposado de Oro: Saca la masa, déjala 10–15 min tapada. Las proteínas se relajan y el S&F funciona 10× mejor.',tm:10},
-    {t:'⚡ Extraer masa vieja para próxima semana',w:'Jue 20:15',temp:'Inmediato',a:'Corta exactamente 200g. Guárdalos en un bote. Déjalos 45 min a temperatura ambiente antes de la nevera.',tip:'Este es el secreto de la continuidad. Dará sabor a nuez y trigo caramelizado la semana siguiente.',tm:45},
+    {t:'⚡ Extraer masa vieja para próxima semana',w:'Jue 20:15',temp:'Inmediato',a:'Corta exactamente 200g. Guárdalos en un bote. Déjalos 45 min a temperatura ambiente antes de la nevera.',tip:'Este es el secreto de la continuidad. Dará sabor a nuez y trigo caramelizado la semana siguiente.',tm:45,ferm:true},
     {t:'Pliegues — Stretch & Fold',w:'Jue 20:30',temp:'Ambiente',a:'3 series de pliegues cada 20 minutos. Moja las manos antes de cada serie.',tip:'Atrapa aire sin sacar el gas para crear los grandes agujeros de miga.',tm:20},
     {t:'Frío — Fermentación lenta',w:'Jue 21:30',temp:'Nevera 4–6°C',a:'Guarda bien tapado hasta sábado o domingo. Mínimo 36h, máximo 72h.',tip:'El frío desarrolla el sabor a nuez y trigo caramelizado. No hay atajos.',tm:null},
     {t:'Formado',w:'Sáb 06:30',temp:'Masa fría',a:'Divide en piezas de ~350g. Da forma de cilindro alargado con tensión.',tip:'Toca lo mínimo posible. Si la masa se calienta, se pega y pierde el aire.',tm:null},
@@ -467,11 +470,11 @@ pizza:{id:'pizza',name:'Pizza Napolitana',sub:'Poolish · Horno Ooni',icon:'🍕
     {t:'Hacer el Poolish',w:'Vie 20:00',temp:'18–20°C',a:'Mezcla 300g harina + 300ml agua + 1.5g levadura. Bate hasta que no haya grumos.',tip:'El poolish fermenta en frío toda la noche y es el secreto del sabor napolitano.',tm:null},
     {t:'Nevera — poolish fermenta',w:'Vie 21:00',temp:'Nevera 4–6°C',a:'Pon el poolish en la nevera bien tapado. Fermenta 11–12 horas.',tip:null,tm:null},
     {t:'Mezcla con Ooni Spiral Halo',w:'Sáb 08:30',temp:'Masa 23–24°C',a:'Poolish + agua fría en bol. Disuelve ligeramente. Añade harina. Máquina 4 min velocidad baja.',tip:'Agua fría para compensar el calor del amasado.',tm:4},
-    {t:'Autólisis',w:'Sáb 08:30',temp:'Ambiente',a:'Deja descansar la masa 20 minutos tapada.',tip:null,tm:20},
+    {t:'Autólisis',w:'Sáb 08:30',temp:'Ambiente',a:'Deja descansar la masa 20 minutos tapada.',tip:null,tm:20,ferm:true},
     {t:'Slap & Fold + Reposado de Oro',w:'Sáb 08:50',temp:'Ambiente',a:'Slap & Fold enérgico. Luego tapa con el bol y espera 10 minutos exactos.',tip:'En esos 10 min las proteínas se relajan. Verás una membrana translúcida como papel.',tm:10},
     {t:'Sal + Pliegues',w:'Sáb 09:00',temp:'Ambiente',a:'Añade la sal. Pliegues: 3 series cada 20 min. Con más energía que con el pan.',tip:'Moja las manos. La pizza napolitana necesita más fuerza que el pan.',tm:20},
     {t:'Boleado — dividir en bolas',w:'Sáb 10:00',temp:'Ambiente',a:'Divide inmediatamente en bolas de 260–270g. Bolea con tensión. Cada una en su tupper.',tip:null,tm:null},
-    {t:'Appretto — fermentación final',w:'Sáb 10:00–14:00',temp:'Temperatura ambiente',a:'Bolas en tuppers individuales a temperatura ambiente durante 4 horas.',tip:'La Nuvola con poolish es muy activa. Vigila que no sobrefermenten — especialmente si supera 24°C.',tm:240},
+    {t:'Appretto — fermentación final',w:'Sáb 10:00–14:00',temp:'Temperatura ambiente',a:'Bolas en tuppers individuales a temperatura ambiente durante 4 horas.',tip:'La Nuvola con poolish es muy activa. Vigila que no sobrefermenten — especialmente si supera 24°C.',tm:240,ferm:true},
     {t:'Precalentar Ooni',w:'Sáb ~13:30',temp:'Piedra: 430°C',a:'Enciende el Ooni 30–40 min antes. La piedra debe llegar a 430°C.',tip:'Con 72% hidratación: piedra a 400–430°C. A 500°C la base se quema antes de evaporar el agua.',tm:35},
     {t:'Estirar con semolina',w:'Sáb 14:00',temp:'Ambiente',a:'Estira sobre semola di grano duro rimacinata. La pizza deslizará perfectamente a la piedra.',tip:null,tm:null},
     {t:'Hornear en Ooni',w:'Sáb 14:05',temp:'430°C piedra',a:'Lanza la pizza. Gas al máximo. En cuanto el borde suba (20–30 seg), BAJA EL GAS AL MÍNIMO. Gira cada 20 seg.',tip:'La llama baja al final: el calor residual de la piedra cocina el centro húmedo.',tm:2},
@@ -489,12 +492,12 @@ coca:{id:'coca',name:'Pa de Coca',sub:'Focaccia catalana · nevera',icon:'🫓',
   bn:'1 bandeja entera. Hidratación ~80%.',
   ft:{autolyse:60,proof:60},
   steps:[
-    {t:'Autólisis — solo con primera agua',w:'Jue 17:00',temp:'18–20°C',a:'Mezcla 400g harina + 300ml agua ÚNICAMENTE. Sin levadura ni sal. Reposo 1 hora.',tip:'A diferencia de la baguette, la coca solo hace autólisis con los primeros 300ml.',tm:60},
+    {t:'Autólisis — solo con primera agua',w:'Jue 17:00',temp:'18–20°C',a:'Mezcla 400g harina + 300ml agua ÚNICAMENTE. Sin levadura ni sal. Reposo 1 hora.',tip:'A diferencia de la baguette, la coca solo hace autólisis con los primeros 300ml.',tm:60,ferm:true},
     {t:'Añadir levain + levadura + sal',w:'Jue 19:00',temp:'Ambiente',a:'Añade el levain de la semana anterior, la levadura y la sal. Empieza a amasar.',tip:null,tm:null},
     {t:'Bassinage — agua restante',w:'Jue 19:00',temp:'Masa 23–24°C',a:'Con el Ooni Spiral Halo, añade los 100ml restantes MUY poco a poco mientras la máquina trabaja.',tip:'El bassinage añade agua a una masa ya desarrollada. Ve despacio — deja que absorba antes de añadir más.',tm:null},
     {t:'Pliegues',w:'Jue 20:15',temp:'Ambiente',a:'3 series de pliegues cada 20 minutos.',tip:null,tm:20},
     {t:'Nevera — fermentación lenta',w:'Jue 21:30',temp:'Nevera 4–6°C',a:'Tapa bien y a la nevera hasta sábado o domingo.',tip:null,tm:null},
-    {t:'Reposo post-nevera — CLAVE',w:'Sáb mañana',temp:'Temperatura ambiente',a:'Saca de la nevera y deja 1 hora de reposo ANTES de extender en la bandeja.',tip:'La coca anterior salió densa porque se sacó directamente de la nevera. Esta hora es OBLIGATORIA.',tm:60},
+    {t:'Reposo post-nevera — CLAVE',w:'Sáb mañana',temp:'Temperatura ambiente',a:'Saca de la nevera y deja 1 hora de reposo ANTES de extender en la bandeja.',tip:'La coca anterior salió densa porque se sacó directamente de la nevera. Esta hora es OBLIGATORIA.',tm:60,ferm:true},
     {t:'Extender en bandeja',w:'1h después',temp:'Ambiente',a:'Aceita generosamente la bandeja. Extiende la masa con los dedos. No presiones en exceso.',tip:'Prueba con media bandeja para comparar grosor.',tm:null},
     {t:'Horneado',w:'A continuación',temp:'250°C / 480°F',a:'Horno bien caliente. Hornea hasta que la superficie esté dorada y crujiente. Parmesano los últimos 5 min si usas.',tip:'El parmesano en polvo está pendiente de probar — puede ser una gran combinación con el aceite.',tm:25},
   ],
@@ -613,18 +616,23 @@ function rSteps(){
   let h='';
   r.steps.forEach((st,i)=>{
     const dn=!!(S.st[S.r]||{})[i];
-    const tl=st.tm?(st.tm>=60?Math.floor(st.tm/60)+'h'+(st.tm%60?st.tm%60+'min':''):st.tm+'min'):'';
+    const isAdj=st.ferm&&S.kt!==22;
+    const adjTm=st.ferm?fadj(st.tm):st.tm;
+    const dispTm=isAdj?adjTm:st.tm;
+    const tl=st.tm?(dispTm>=60?Math.floor(dispTm/60)+'h'+(dispTm%60?dispTm%60+'min':''):dispTm+'min'):'';
+    const adjInfo=isAdj?`<span class="tadj">(${st.tm}→${adjTm}min)</span>`:'';
+    const fermBadge=isAdj?`<span class="ferm-badge ${S.kt<22?'cool':''}">${S.kt}°C</span>`:'';
     h+=`<div class="step ${dn?'done':''}" id="sp${i}">
       <div class="sh" onclick="tgSB(${i})">
         <div class="snum">${dn?'✓':i+1}</div>
-        <div class="stg"><div class="stitle">${st.t}</div>
+        <div class="stg"><div class="stitle">${st.t}${fermBadge}</div>
         <div class="smeta">${st.w?`<span>🕐 ${st.w}</span>`:''}${st.temp?`<span>🌡 ${st.temp}</span>`:''}</div></div>
         <div class="sacts">
-          ${st.tm?`<button class="tbtn" id="tbtn${i}" onclick="event.stopPropagation();opT(${i})">⏱ ${tl}</button>`:''}
+          ${st.tm?`<button class="tbtn" id="tbtn${i}" onclick="event.stopPropagation();opT(${i})" title="${isAdj?'Ajustado de '+st.tm+'min → '+adjTm+'min por temperatura de '+S.kt+'°C':''}">⏱ ${tl}${adjInfo}</button>`:''}
           <div class="sck" onclick="event.stopPropagation();tgDn(${i})">${dn?'✓':''}</div>
         </div>
       </div>
-      <div class="sb" id="sb${i}"><div class="sact">${st.a}</div>${st.tip?`<div class="stip">${st.tip}</div>`:''}</div>
+      <div class="sb" id="sb${i}"><div class="sact">${st.a}</div>${isAdj?`<div class="stip" style="background:linear-gradient(135deg,#fef3e0,#fdecd0);border-color:var(--gold)">🌡 Tiempo ajustado: ${st.tm}min → <strong>${adjTm}min</strong> por temperatura de cocina (${S.kt}°C)</div>`:''}${st.tip?`<div class="stip">${st.tip}</div>`:''}</div>
     </div>`;
   });
   document.getElementById('stepsc').innerHTML=h;
@@ -638,8 +646,9 @@ function clearSt(){S.st[S.r]={};rSteps();sv();}
 let T={idx:-1,tot:0,rem:0,run:false,iv:null};
 function opT(i){
   const st=R[S.r].steps[i];if(!st.tm)return;
-  T.idx=i;T.tot=st.tm*60;if(!T.run)T.rem=st.tm*60;
-  document.getElementById('tpname').textContent=st.t;
+  const adjTm=st.ferm?fadj(st.tm):st.tm;
+  T.idx=i;T.tot=adjTm*60;if(!T.run)T.rem=adjTm*60;
+  document.getElementById('tpname').textContent=st.t+(st.ferm&&S.kt!==22?` (${st.tm}→${adjTm}min a ${S.kt}°C)`:'');
   document.getElementById('tpanel').classList.add('open');
   updT();
 }
