@@ -32,11 +32,12 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .nb{background:transparent;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:5px 12px;border-radius:16px;font-size:12px;transition:all .15s}
 .nb:hover{background:rgba(255,255,255,.08);color:#fff}
 .nb.on{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:700}
-.tw{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:4px 11px;flex-shrink:0}
-.tw label{font-size:11px;color:rgba(255,255,255,.5)}
-.ti{background:transparent;border:none;color:#fff;font-family:var(--font-m);font-size:13px;width:34px;text-align:center}
+.tw{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:22px;padding:6px 14px;flex-shrink:0;animation:tempPulse 3s ease-in-out infinite}
+@keyframes tempPulse{0%,100%{border-color:rgba(255,255,255,.25)}50%{border-color:rgba(255,255,255,.45)}}
+.tw label{font-size:16px;color:rgba(255,255,255,.7)}
+.ti{background:transparent;border:none;color:#fff;font-family:var(--font-m);font-size:18px;width:38px;text-align:center;font-weight:700}
 .ti:focus{outline:none}
-.tbg{font-size:10px;font-family:var(--font-m);padding:2px 7px;border-radius:10px;font-weight:700}
+.tbg{font-size:11px;font-family:var(--font-m);padding:3px 9px;border-radius:10px;font-weight:700}
 .tc{background:#dbeeff;color:#1a4a7a}.tw-warm{background:#ffeacc;color:#7a3a00}.th{background:#ffe0d0;color:#7a1a00}
 .lang-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:4px 10px;border-radius:18px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;flex-shrink:0}
 .lang-btn:hover{background:rgba(255,255,255,.15);color:#fff}
@@ -445,6 +446,7 @@ baguette:{id:'baguette',name:'Baguette Tradition',sub:'Tradición francesa · 60
   bn:'~3 baguettes de 350g. Hidratación 70%.',
   ft:{autolyse:120,proof:30},
   steps:[
+    {t:'🌡 Medir temperatura de cocina',w:'Jue 18:00',temp:null,a:'Mide la temperatura ambiente de tu cocina con un termómetro y ajústala arriba a la derecha. Todos los tiempos de fermentación se adaptan automáticamente.',tip:'Este es el paso más importante y el más olvidado. Una cocina a 27°C fermenta mucho más rápido que a 20°C. Ajusta siempre antes de empezar.',tm:null},
     {t:'Preparar — bol Ooni a la nevera',w:'Jue 18:00',temp:null,a:'Mete el bol del Ooni Spiral Halo en la nevera. Saca la levadura y la masa vieja para atemperar.',tip:'El bol frío compensará el calor que genera la máquina al mezclar.',tm:null},
     {t:'Autólisis en bol aparte',w:'Jue 18:00',temp:'Agua fría de nevera',a:'En un bol aparte (no el del Ooni), mezcla harina + agua fría directa de la nevera con el batidor TEEVEA. Reposo 2 horas.',tip:'No amases; la elasticidad se crea sola. El agua se atemperará naturalmente durante las 2h. No importa la temperatura — solo es hidratación.',tm:120,ferm:true},
     {t:'Integrar masa vieja',w:'Jue 20:00',temp:'Ambiente',a:'Añade la masa vieja troceada (200g del finde pasado) a la autólisis.',tip:null,tm:null},
@@ -473,6 +475,7 @@ pizza:{id:'pizza',name:'Pizza Napolitana',sub:'Poolish · Horno Ooni',icon:'🍕
   bn:'1 bola = 260–270g. Hidratación total ~72%.',
   ft:{autolyse:20,proof:240},
   steps:[
+    {t:'🌡 Medir temperatura de cocina',w:'Vie 18:00',temp:null,a:'Mide la temperatura ambiente de tu cocina con un termómetro y ajústala arriba a la derecha. Todos los tiempos de fermentación se adaptan automáticamente.',tip:'Este es el paso más importante y el más olvidado. Una cocina a 27°C fermenta mucho más rápido que a 20°C. Ajusta siempre antes de empezar.',tm:null},
     {t:'Preparar levadura',w:'Vie 18:00',temp:null,a:'Saca la levadura del congelador para atemperar.',tip:null,tm:null},
     {t:'Hacer el Poolish',w:'Vie 20:00',temp:'Ambiente',a:'Mezcla 300g harina + 300ml agua + 1.5g levadura. Bate hasta que no haya grumos.',tip:'El poolish fermenta en frío toda la noche y es el secreto del sabor napolitano.',tm:null},
     {t:'Nevera — poolish fermenta',w:'Vie 21:00',temp:'Nevera 4–6°C',a:'Pon el poolish en la nevera bien tapado. Fermenta 11–12 horas.',tip:null,tm:null},
@@ -499,6 +502,7 @@ coca:{id:'coca',name:'Pa de Coca',sub:'Focaccia catalana · nevera',icon:'🫓',
   bn:'1 bandeja entera. 300g harina + 300ml total. Hidratación ~100%.',
   ft:{autolyse:60,proof:60},
   steps:[
+    {t:'🌡 Medir temperatura de cocina',w:'Jue 18:00',temp:null,a:'Mide la temperatura ambiente de tu cocina con un termómetro y ajústala arriba a la derecha. Todos los tiempos de fermentación se adaptan automáticamente.',tip:'Este es el paso más importante y el más olvidado. Una cocina a 27°C fermenta mucho más rápido que a 20°C. Ajusta siempre antes de empezar.',tm:null},
     {t:'Autólisis — agua fría de nevera',w:'Jue 18:00',temp:'Agua fría de nevera',a:'Mezcla 300g harina + 200ml agua fría directo de la nevera. Sin levadura ni sal. Reposo 1 hora. En paralelo con la autólisis de la baguette.',tip:'El agua fría se atemperará durante la autólisis. Solo es hidratación — la temperatura no importa aquí.',tm:60,ferm:true},
     {t:'Añadir levain + levadura + sal',w:'Jue 19:00',temp:'Ambiente',a:'Añade el levain de la semana anterior, la levadura y la sal. Empieza a amasar.',tip:null,tm:null},
     {t:'Bassinage — agua fría / hielos',w:'Jue 19:00',temp:'Masa 23–24°C',a:'Con el Ooni Spiral Halo, añade los 100ml de agua fría restantes MUY poco a poco mientras la máquina trabaja. Si la masa está caliente, usa hielos en lugar de agua.',tip:'El bassinage con agua fría o hielos compensa el calor del Ooni y añade agua a una masa ya desarrollada. Ve despacio — deja que absorba antes de añadir más.',tm:null},
