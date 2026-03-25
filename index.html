@@ -761,7 +761,7 @@ function upTemp(){
   if(S.kt<=18){b.textContent=u('tempCool');b.className='tbg tc';}
   else if(S.kt<=24){b.textContent=u('tempNormal');b.className='tbg tw-warm';}
   else{b.textContent=u('tempHot');b.className='tbg th';}
-  rFerm();sv();
+  rFerm();rSteps();sv();
 }
 function fadj(base){return Math.round(base*Math.pow(0.88,S.kt-22));}
 function rFerm(){
