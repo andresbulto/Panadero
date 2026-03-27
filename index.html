@@ -254,6 +254,10 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .devn{font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
 .devs{color:var(--ink-m)}
 .devt{font-family:var(--font-m);font-size:9px;color:var(--ink-f)}
+.wrb{border:1.5px solid var(--bdr);background:#fff;border-radius:18px;padding:5px 13px;font-size:12px;cursor:pointer;transition:all .14s;display:flex;align-items:center;gap:5px}
+.wrb:hover{border-color:var(--gold-l);background:var(--gold-bg)}
+.wrb.on{border-color:var(--rust);background:var(--rust-bg);font-weight:700}
+.wrb .wrb-icon{font-size:15px}
 
 /* SHOPPING */
 .slayout{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
@@ -374,6 +378,18 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 
 <!-- WEEK -->
 <div class="view" id="v-week">
+  <div class="card" style="margin-bottom:12px">
+    <div class="ct" id="ct-wplanner">Planificador</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="wrecipe-tabs"></div>
+    <div id="weat-row" style="display:none;margin-top:8px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <label style="font-size:12px;color:var(--ink-m);font-weight:700" id="lbl-eat">Quiero comer el:</label>
+        <select id="weat-day" onchange="updRetro()" style="font-family:var(--font-m);font-size:13px;padding:4px 8px;border:1.5px solid var(--bdrS);border-radius:6px;background:#fff"></select>
+        <label style="font-size:12px;color:var(--ink-m)">a las</label>
+        <input id="weat-time" type="time" value="14:00" onchange="updRetro()" style="font-family:var(--font-m);font-size:13px;padding:4px 8px;border:1.5px solid var(--bdrS);border-radius:6px;background:#fff;width:90px">
+      </div>
+    </div>
+  </div>
   <div class="week-hd">
     <div style="display:flex;align-items:center;gap:8px">
       <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(-1)" id="btn-prev">← Anterior</button>
@@ -384,7 +400,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
   </div>
   <div class="wgrid" id="wgrid"></div>
   <div class="card" style="margin-top:12px">
-    <div class="ct" id="ct-weeksum">🗓 Resumen de la Semana</div>
+    <div class="ct" id="ct-weeksum">Resumen de la Semana</div>
     <div id="wplan" style="font-size:13px;line-height:2.1;color:var(--ink-m)"></div>
   </div>
 </div>
@@ -773,7 +789,9 @@ es:{
   dayNames:['Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b','Dom'],
   tempCool:'Fresca',tempNormal:'Normal',tempHot:'Caliente',
   masterTips:'\u26a1 Claves del Maestro',
-  astucia:'Astucia'
+  astucia:'Astucia',
+  planner:'Planificador',allRecipes:'Todas',eatLabel:'Quiero comer el:',eatAt:'a las',
+  wDayNames:['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado']
 },
 fr:{
   logo:'Le Journal <em>de Ganons</em>',
@@ -807,7 +825,9 @@ fr:{
   dayNames:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
   tempCool:'Fra\u00eeche',tempNormal:'Normale',tempHot:'Chaude',
   masterTips:'\u26a1 Cl\u00e9s du Ma\u00eetre',
-  astucia:'Astuce'
+  astucia:'Astuce',
+  planner:'Planificateur',allRecipes:'Toutes',eatLabel:'Je veux manger le :',eatAt:'\u00e0',
+  wDayNames:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi']
 }};
 
 function u(key){return UI[S.lang][key];}
@@ -860,7 +880,8 @@ let S={
   j:{baguette:null,coca:null,pizza:null,biga:null,pao:null,bizcocho:null},
   sh:{baguette:{pl:false,q:1},coca:{pl:false,q:1},pizza:{pl:false,q:4},biga:{pl:false,q:7},pao:{pl:false,q:1},bizcocho:{pl:false,q:1}},
   slck:{},
-  kt:22,wo:0,hf:'all',pp:null
+  kt:22,wo:0,hf:'all',pp:null,
+  wr:'all',weatDay:6,weatTime:'14:00'
 };
 function ld(){
   try{const d=JSON.parse(localStorage.getItem('pan-v2')||'null');if(d)Object.assign(S,d);}catch(e){}
@@ -1106,7 +1127,60 @@ function rHist(){
 const DNAMES_EU=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const DKEYS_EU=[1,2,3,4,5,6,0];
 function cw(d){if(d===0)S.wo=0;else S.wo+=d;rWeek();sv();}
+function setWR(id){S.wr=id;rWeek();sv();}
+function updRetro(){
+  S.weatDay=parseInt(document.getElementById('weat-day').value);
+  S.weatTime=document.getElementById('weat-time').value;
+  rWeek();sv();
+}
+function retroEvents(r,eatDay,eatTimeStr){
+  // Find the last event (bake/eat) in the recipe's weekly plan
+  const we=r.we;if(!we.length)return[];
+  const lastEv=we[we.length-1];
+  const lastDay=lastEv.day;
+  const lastTime=lastEv.time;
+  // Parse eat target time
+  const [eatH,eatM]=eatTimeStr.split(':').map(Number);
+  const [lastH,lastM]=(lastTime.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
+  // Calculate time offset in minutes from lastEv to eat target
+  const eatMin=eatDay*1440+eatH*60+eatM;
+  const lastMin=lastDay*1440+lastH*60+lastM;
+  const offsetMin=eatMin-lastMin;
+  // Apply offset to all events
+  return we.map(ev=>{
+    const [h,m]=(ev.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
+    let totalMin=ev.day*1440+h*60+m+offsetMin;
+    // Normalize to 0-7 days range
+    while(totalMin<0)totalMin+=7*1440;
+    while(totalMin>=7*1440)totalMin-=7*1440;
+    const newDay=Math.floor(totalMin/1440);
+    const newH=Math.floor((totalMin%1440)/60);
+    const newM=totalMin%60;
+    const newTime=String(newH).padStart(2,'0')+':'+String(newM).padStart(2,'0');
+    return{...ev,day:newDay,time:newTime,rid:r.id,rname:r.name,icon:r.icon};
+  });
+}
 function rWeek(){
+  const cr=CR();
+  // Render recipe filter tabs
+  const tabs=[`<button class="wrb ${S.wr==='all'?'on':''}" onclick="setWR('all')">${u('allRecipes')}</button>`];
+  Object.values(cr).forEach(r=>{
+    tabs.push(`<button class="wrb ${S.wr===r.id?'on':''}" onclick="setWR('${r.id}')"><span class="wrb-icon">${r.icon}</span>${r.name}</button>`);
+  });
+  document.getElementById('wrecipe-tabs').innerHTML=tabs.join('');
+  document.getElementById('ct-wplanner').textContent=u('planner');
+  // Show eat picker only when a single recipe is selected
+  const eatRow=document.getElementById('weat-row');
+  const isSingle=S.wr!=='all';
+  eatRow.style.display=isSingle?'block':'none';
+  if(isSingle){
+    document.getElementById('lbl-eat').textContent=u('eatLabel');
+    const wdn=u('wDayNames');
+    const sel=document.getElementById('weat-day');
+    sel.innerHTML=[0,1,2,3,4,5,6].map(d=>`<option value="${d}" ${S.weatDay===d?'selected':''}>${wdn[d]}</option>`).join('');
+    document.getElementById('weat-time').value=S.weatTime;
+  }
+  // Calendar
   const today=new Date();
   const dow=today.getDay();
   const mondayOff=dow===0?-6:1-dow;
@@ -1114,13 +1188,21 @@ function rWeek(){
   const days=DKEYS_EU.map((_,i)=>{const d=new Date(sw);d.setDate(sw.getDate()+i);return d;});
   const loc=S.lang==='fr'?'fr-FR':'es-ES';
   document.getElementById('wrange').textContent=`${days[0].toLocaleDateString(loc,{day:'numeric',month:'short'})} — ${days[6].toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'})}`;
-  const epd={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};const cr=CR();
-  Object.values(cr).forEach(r=>r.we.forEach(ev=>{epd[ev.day].push({...ev,rid:r.id,rname:r.name,icon:r.icon});}));
+  // Build events per day
+  const epd={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  if(isSingle){
+    // Single recipe: retroplanning from chosen eat time
+    const r=cr[S.wr];
+    if(r)retroEvents(r,S.weatDay,S.weatTime).forEach(ev=>epd[ev.day].push(ev));
+  }else{
+    // All recipes: show default schedule
+    Object.values(cr).forEach(r=>r.we.forEach(ev=>{epd[ev.day].push({...ev,rid:r.id,rname:r.name,icon:r.icon});}));
+  }
   const dn=u('dayNames');
   document.getElementById('wgrid').innerHTML=days.map((d,i)=>{
     const isT=d.toDateString()===today.toDateString();
     const jsDay=d.getDay();
-    const evs=epd[jsDay]||[];
+    const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));
     const isBake=ev=>ev.step.includes('\ud83d\udd25');
     return `<div class="dcol ${isT?'dtoday':''}">
       <div class="dhead"><div class="dname">${dn[i]}</div><div class="ddate">${d.getDate()}</div></div>
@@ -1129,7 +1211,7 @@ function rWeek(){
     </div>`;
   }).join('');
   let pl='';
-  days.forEach((d,i)=>{const jsDay=d.getDay();const evs=epd[jsDay];if(evs.length)pl+=`<div><strong>${dn[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' \u00b7 ')}</div>`;});
+  days.forEach((d,i)=>{const jsDay=d.getDay();const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));if(evs.length)pl+=`<div><strong>${dn[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' \u00b7 ')}</div>`;});
   document.getElementById('wplan').innerHTML=pl||`<em>${u('noEvents')}</em>`;
 }
 
