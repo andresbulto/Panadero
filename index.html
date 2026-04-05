@@ -22,6 +22,7 @@
 body{font-family:var(--font-b);background:var(--cream);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.6}
 button,input,textarea,select{font-family:var(--font-b);cursor:pointer}
 input,textarea{cursor:text}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.sh:focus-visible,.rtab:focus-visible,.dev:focus-visible,.sli:focus-visible,.pcard:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
 /* HEADER */
 header{background:var(--ink);position:sticky;top:0;z-index:200;box-shadow:0 2px 18px rgba(0,0,0,.3)}
@@ -234,7 +235,11 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 .week-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .wrange{font-family:var(--font-d);font-size:15px;font-weight:700}
 .wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-@media(max-width:700px){.wgrid{grid-template-columns:repeat(4,1fr)}}
+.wlist{display:none;gap:10px;flex-direction:column}
+.wdaylist{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.wdaylist .dhead{display:flex;justify-content:space-between;align-items:center}
+.wdaylist .dbody{padding:8px}
+@media(max-width:700px){.wgrid{display:none}.wlist{display:flex}}
 .dcol{background:#fff;border:1px solid var(--bdr);border-radius:var(--r);min-height:180px;overflow:hidden;box-shadow:var(--sh)}
 .dhead{padding:7px 9px;border-bottom:1px solid var(--bdr);background:var(--parchment)}
 .dname{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-m)}
@@ -297,6 +302,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bdrS);border-radius:2px}
 @media print{header,.tpanel,.jform,.btnp,.btns,.tbtn,.sck,.tpcl{display:none!important}.app{padding:0}.sli.ck{display:none}}
+@media(max-width:700px){.hi{display:grid;grid-template-columns:1fr auto;align-items:center}.logo{grid-column:1/2}.lang-btn{grid-column:2/3;justify-self:end}.tw{grid-column:1/-1;justify-content:center;padding:7px 14px}.tw label{font-size:18px}.ti{font-size:22px;width:42px}nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%}.nb{padding:8px 10px;border-radius:12px;text-align:center}.rtabs{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.rtab{min-width:168px}}
 </style>
 </head>
 <body>
@@ -315,6 +321,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
       <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()"><span style="color:#fff;font-size:20px;font-weight:700;font-family:var(--font-m)">°C</span>
       <span class="tbg tc" id="tbadge">Normal</span>
     </div>
+    <button class="lang-btn" id="sharebtn" onclick="shareView()">🔗 Compartir vista</button>
     <button class="lang-btn" id="langbtn" onclick="toggleLang()">FR</button>
   </div>
 </header>
@@ -399,6 +406,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
     <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(0)" id="btn-today">Hoy</button>
   </div>
   <div class="wgrid" id="wgrid"></div>
+  <div class="wlist" id="wlist"></div>
   <div class="card" style="margin-top:12px">
     <div class="ct" id="ct-weeksum">Resumen de la Semana</div>
     <div id="wplan" style="font-size:13px;line-height:2.1;color:var(--ink-m)"></div>
@@ -414,6 +422,18 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
     <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-baguette" onclick="setHF('baguette')">🥖 Baguette</button>
     <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-pizza" onclick="setHF('pizza')">🍕 Pizza</button>
     <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-coca" onclick="setHF('coca')">🫓 Pa de Coca</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-biga" onclick="setHF('biga')">🫓 Biga</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-pao" onclick="setHF('pao')">🍞 Pão</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-bizcocho" onclick="setHF('bizcocho')">🍰 Bizcocho</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hsf-all" onclick="setHSF('all')">Todas las notas</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hsf-note" onclick="setHSF('note')">Solo con nota</button>
+    <button class="btns" style="font-size:11px;padding:4px 10px" id="hsf-photo" onclick="setHSF('photo')">Solo con foto</button>
+    <select id="hsort" onchange="setHSort(this.value)" style="font-family:var(--font-b);font-size:11px;padding:4px 10px;border:1.5px solid var(--bdrS);border-radius:6px;background:#fff;color:var(--ink)">
+      <option value="recent">Más recientes</option>
+      <option value="best">Mejor valoradas</option>
+    </select>
   </div>
   <div class="hgrid" id="hgrid"></div>
 </div>
@@ -451,7 +471,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
         <input id="surl" type="text" value="" style="flex:1;border:1.5px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:12px;font-family:var(--font-m)" readonly>
         <button class="btnp" onclick="cpUrl()">Copiar</button>
       </div>
-      <p style="margin-top:11px;font-size:11px;color:var(--ink-f);font-style:italic">Notas y fotos guardadas localmente en este navegador.</p>
+      <p style="margin-top:11px;font-size:11px;color:var(--ink-f);font-style:italic">Comparte la vista actual (pantalla, receta, idioma, temperatura, semana y filtro principal). No comparte notas, checks, historial local ni fotos.</p>
     </div>
   </div>
 </div>
@@ -863,6 +883,7 @@ function toggleLang(){
   document.getElementById('ct-chart').textContent=u('chartTitle');
   document.getElementById('shopping-title').textContent=u('shoppingTitle');
   document.getElementById('tp-title').textContent=u('timer');
+  document.getElementById('sharebtn').textContent=S.lang==='fr'?'🔗 Partager la vue':'🔗 Compartir vista';
   rAll();upTemp();
   if(S.view==='shopping')rShop();
   if(S.view==='week')rWeek();
@@ -880,7 +901,7 @@ let S={
   j:{baguette:null,coca:null,pizza:null,biga:null,pao:null,bizcocho:null},
   sh:{baguette:{pl:false,q:1},coca:{pl:false,q:1},pizza:{pl:false,q:4},biga:{pl:false,q:7},pao:{pl:false,q:1},bizcocho:{pl:false,q:1}},
   slck:{},
-  kt:22,wo:0,hf:'all',pp:null,
+  kt:22,wo:0,hf:'all',hsf:'all',hsort:'recent',pp:null,
   wr:'all',weatDay:6,weatTime:'14:00'
 };
 function ld(){
@@ -938,10 +959,10 @@ function rFerm(){
 // ══════════════ TABS ══════════════
 function rTabs(){
   document.getElementById('rtabs').innerHTML=Object.values(CR()).map(r=>`
-    <div class="rtab ${S.r===r.id?'on':''}" onclick="selR('${r.id}')">
+    <button type="button" class="rtab ${S.r===r.id?'on':''}" onclick="selR('${r.id}')" aria-pressed="${S.r===r.id?'true':'false'}">
       <div class="rtab-icon">${r.icon}</div>
       <div><div class="rtab-n">${r.name}</div><div class="rtab-s">${r.sub}</div></div>
-    </div>`).join('');
+    </button>`).join('');
 }
 function selR(id){S.r=id;rAll();sv();}
 
@@ -1013,7 +1034,7 @@ function rSteps(){
     const adjInfo=isAdj?`<span class="tadj">(${st.tm}→${adjTm}min)</span>`:'';
     const fermBadge=isAdj?`<span class="ferm-badge ${S.kt<22?'cool':''}">${S.kt}°C</span>`:'';
     h+=`<div class="step ${dn?'done':''}" id="sp${i}">
-      <div class="sh" onclick="tgSB(${i})">
+      <div class="sh" onclick="tgSB(${i})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();tgSB(${i});}">
         <div class="snum">${dn?'✓':i+1}</div>
         <div class="stg"><div class="stitle">${st.t}${fermBadge}</div>
         <div class="smeta">${st.w?`<span>🕐 ${st.w}</span>`:''}${st.temp?`<span>🌡 ${st.temp}</span>`:''}</div></div>
@@ -1065,8 +1086,10 @@ function updT(){
 function tDone(){
   document.getElementById('tpsbtn').textContent=u('done');document.getElementById('tpsbtn').className='tpb tpstart';
   const f=document.createElement('div');f.className='tflash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);
-  if('Notification'in window&&Notification.permission==='granted')new Notification('⏱ '+u('notifDone'),{body:CR()[S.r].steps[T.idx].t+' — '+u('notifReady')});
-  else if(Notification.permission!=='denied')Notification.requestPermission();
+  if('Notification'in window){
+    if(Notification.permission==='granted')new Notification('⏱ '+u('notifDone'),{body:CR()[S.r].steps[T.idx].t+' — '+u('notifReady')});
+    else if(Notification.permission==='default')Notification.requestPermission().then(p=>{if(p==='granted')new Notification('⏱ '+u('notifDone'),{body:CR()[S.r].steps[T.idx].t+' — '+u('notifReady')});}).catch(()=>{});
+  }
 }
 
 // ══════════════ JOURNAL ══════════════
@@ -1099,11 +1122,16 @@ function rJ(){
 }
 
 // ══════════════ HISTORY ══════════════
-function setHF(f){S.hf=f;document.querySelectorAll('[id^="hf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hf-'+f).classList.add('on');rHist();}
+function setHF(f){S.hf=f;document.querySelectorAll('[id^="hf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hf-'+f).classList.add('on');rHist();sv();}
+function setHSF(f){S.hsf=f;document.querySelectorAll('[id^="hsf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hsf-'+f).classList.add('on');rHist();sv();}
+function setHSort(v){S.hsort=v;rHist();sv();}
 function rHist(){
   let all=[];const cr=CR();
   Object.keys(R).forEach(id=>(S.j[id]||[]).filter(e=>e.type==='past').forEach(e=>all.push({...e,rid:id,rname:cr[id].name,icon:cr[id].icon})));
-  const fl=S.hf==='all'?all:all.filter(e=>e.rid===S.hf);
+  let fl=S.hf==='all'?all:all.filter(e=>e.rid===S.hf);
+  if(S.hsf==='photo')fl=fl.filter(e=>!!e.photo);
+  if(S.hsf==='note')fl=fl.filter(e=>!!(e.text||'').trim());
+  fl=fl.sort((a,b)=>S.hsort==='best'?((b.score||0)-(a.score||0)):(b.id-a.id));
   const scored=all.filter(e=>e.score).slice(-10);
   document.getElementById('cbars').innerHTML=scored.length===0
     ?`<div style="color:var(--ink-f);font-style:italic;font-size:12px;align-self:center">${u('noScores')}</div>`
@@ -1210,6 +1238,11 @@ function rWeek(){
         <div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join('')}</div>
     </div>`;
   }).join('');
+  document.getElementById('wlist').innerHTML=days.map((d,i)=>{
+    const jsDay=d.getDay();
+    const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));
+    return `<div class="wdaylist ${d.toDateString()===today.toDateString()?'dtoday':''}"><div class="dhead"><div class="dname">${dn[i]}</div><div class="ddate">${d.getDate()}</div></div><div class="dbody">${evs.length?evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)} ${ev.step.includes('🔥')?'bake':''}" onclick="selR('${ev.rid}');gv('recipe')"><div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join(''):`<div style="color:var(--ink-f);font-style:italic;font-size:12px;padding:4px 2px">${u('noEvents')}</div>`}</div></div>`;
+  }).join('');
   let pl='';
   days.forEach((d,i)=>{const jsDay=d.getDay();const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));if(evs.length)pl+=`<div><strong>${dn[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' \u00b7 ')}</div>`;});
   document.getElementById('wplan').innerHTML=pl||`<em>${u('noEvents')}</em>`;
@@ -1261,6 +1294,17 @@ function tgSl(k){S.slck[k]=!S.slck[k];rShop();sv();}
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 function cpUrl(){document.getElementById('surl').value=window.location.href;const i=document.getElementById('surl');i.select();document.execCommand('copy');const b=event.target;b.textContent='✓ Copiado';setTimeout(()=>b.textContent='Copiar',2000);}
+function shareView(){
+  const url=new URL(window.location.href);
+  url.searchParams.set('view',S.view);
+  url.searchParams.set('recipe',S.r);
+  url.searchParams.set('lang',S.lang);
+  url.searchParams.set('temp',S.kt);
+  url.searchParams.set('week',S.wo);
+  url.searchParams.set('history',S.hf);
+  document.getElementById('surl').value=url.toString();
+  openM('mshare');
+}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 // ══════════════ RENDER ALL ══════════════
@@ -1299,8 +1343,11 @@ document.getElementById('history-title').textContent=u('historyTitle');
 document.getElementById('ct-chart').textContent=u('chartTitle');
 document.getElementById('shopping-title').textContent=u('shoppingTitle');
 document.getElementById('tp-title').textContent=u('timer');
+document.getElementById('sharebtn').textContent=S.lang==='fr'?'🔗 Partager la vue':'🔗 Compartir vista';
+document.getElementById('hsort').value=S.hsort||'recent';
 upTemp();
 rAll();
+rHist();
 </script>
 </body>
 </html>
