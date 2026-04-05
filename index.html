@@ -791,7 +791,7 @@ es:{
   historyTitle:'\ud83c\udfc6 Historial de Hornadas',chartTitle:'\ud83d\udcc8 Evoluci\u00f3n de Notas',
   shoppingTitle:'\ud83d\uded2 Lista de Compra',planWeek:'Planifica tu semana',selectRecipes:'Selecciona las recetas que har\u00e1s.',
   timer:'\u23f1 Temporizador',start:'\u25b6 Iniciar',pause:'\u23f8 Pausar',resume:'\u25b6 Continuar',reset:'\u21ba Reset',done:'\u2713 Terminado',
-  share:'\ud83d\udd17 Compartir',shareText:'Comparte este enlace:',copy:'Copiar',copied:'\u2713 Copiado',
+  share:'\ud83d\udd17 Compartir',shareView:'\ud83d\udd17 Compartir vista',shareTitle:'\ud83d\udd17 Compartir',shareText:'Comparte este enlace:',copy:'Copiar',copied:'\u2713 Copiado',sharePrivacy:'Comparte la vista actual (pantalla, receta, idioma, temperatura, semana y filtro principal). No comparte notas, checks, historial local ni fotos.',
   localNote:'Notas y fotos guardadas localmente en este navegador.',
   steps:'pasos',qty:'Cant:',print:'\ud83d\udda8 Imprimir',
   noNotes:'Sin notas a\u00fan. \u00a1Empieza a registrar tus intentos!',
@@ -827,7 +827,7 @@ fr:{
   historyTitle:'\ud83c\udfc6 Historique des Fourn\u00e9es',chartTitle:'\ud83d\udcc8 \u00c9volution des Notes',
   shoppingTitle:'\ud83d\uded2 Liste de Courses',planWeek:'Planifiez votre semaine',selectRecipes:'S\u00e9lectionnez les recettes \u00e0 pr\u00e9parer.',
   timer:'\u23f1 Minuteur',start:'\u25b6 D\u00e9marrer',pause:'\u23f8 Pause',resume:'\u25b6 Reprendre',reset:'\u21ba Reset',done:'\u2713 Termin\u00e9',
-  share:'\ud83d\udd17 Partager',shareText:'Partagez ce lien :',copy:'Copier',copied:'\u2713 Copi\u00e9',
+  share:'\ud83d\udd17 Partager',shareView:'\ud83d\udd17 Partager la vue',shareTitle:'\ud83d\udd17 Partager',shareText:'Partagez ce lien :',copy:'Copier',copied:'\u2713 Copi\u00e9',sharePrivacy:'Partage la vue actuelle (\u00e9cran, recette, langue, temp\u00e9rature, semaine et filtre principal). Ne partage pas les notes, les cases coch\u00e9es, l\'historique local ni les photos.',
   localNote:'Notes et photos enregistr\u00e9es localement dans ce navigateur.',
   steps:'\u00e9tapes',qty:'Qt\u00e9 :',print:'\ud83d\udda8 Imprimer',
   noNotes:'Aucune note pour le moment. Commencez \u00e0 enregistrer vos essais !',
@@ -852,14 +852,11 @@ fr:{
 
 function u(key){return UI[S.lang][key];}
 function CR(){return S.lang==='fr'?R_FR:R;}
-function toggleLang(){
-  S.lang=S.lang==='es'?'fr':'es';
-  document.getElementById('langbtn').textContent=S.lang==='es'?'FR':'ES';
+function refreshStaticUIText(){
   document.querySelector('.logo').innerHTML=u('logo');
   const nbs=document.querySelectorAll('.nb');
   const navKeys=['recipes','week','history','shopping'];
   nbs.forEach((b,i)=>{if(navKeys[i])b.textContent=u(navKeys[i]);});
-  // Update static UI text
   document.getElementById('ct-qty').textContent=u('quantities');
   document.getElementById('ct-ing').textContent=u('ingredients');
   document.getElementById('ct-ferm').textContent=u('fermentation');
@@ -883,7 +880,16 @@ function toggleLang(){
   document.getElementById('ct-chart').textContent=u('chartTitle');
   document.getElementById('shopping-title').textContent=u('shoppingTitle');
   document.getElementById('tp-title').textContent=u('timer');
-  document.getElementById('sharebtn').textContent=S.lang==='fr'?'🔗 Partager la vue':'🔗 Compartir vista';
+  document.getElementById('sharebtn').textContent=u('shareView');
+  document.querySelector('#mshare .mh h3').textContent=u('shareTitle');
+  document.querySelector('#mshare .mb p').textContent=u('shareText');
+  document.querySelector('#mshare .mb .btnp').textContent=u('copy');
+  document.querySelector('#mshare .mb p:last-child').textContent=u('sharePrivacy');
+}
+function toggleLang(){
+  S.lang=S.lang==='es'?'fr':'es';
+  document.getElementById('langbtn').textContent=S.lang==='es'?'FR':'ES';
+  refreshStaticUIText();
   rAll();upTemp();
   if(S.view==='shopping')rShop();
   if(S.view==='week')rWeek();
@@ -912,6 +918,21 @@ function ld(){
     if(!S.st[id])S.st[id]={};
     if(!S.sh[id])S.sh[id]={pl:false,q:R[id].db};
   });
+}
+function applySharedViewFromUrl(){
+  const p=new URLSearchParams(window.location.search);
+  const view=p.get('view');
+  const recipe=p.get('recipe');
+  const lang=p.get('lang');
+  const temp=parseInt(p.get('temp'),10);
+  const week=parseInt(p.get('week'),10);
+  const history=p.get('history');
+  if(view&&['recipe','week','history','shopping'].includes(view))S.view=view;
+  if(recipe&&R[recipe])S.r=recipe;
+  if(lang&&['es','fr'].includes(lang))S.lang=lang;
+  if(Number.isFinite(temp))S.kt=Math.max(14,Math.min(35,temp));
+  if(Number.isFinite(week))S.wo=week;
+  if(history&&['all',...Object.keys(R)].includes(history))S.hf=history;
 }
 
 function sv(){const d={...S,pp:null};localStorage.setItem('pan-v2',JSON.stringify(d));}
@@ -1293,7 +1314,7 @@ function tgSl(k){S.slck[k]=!S.slck[k];rShop();sv();}
 // ══════════════ MODAL ══════════════
 function openM(id){document.getElementById(id).classList.add('open');}
 function closeM(id){document.getElementById(id).classList.remove('open');}
-function cpUrl(){document.getElementById('surl').value=window.location.href;const i=document.getElementById('surl');i.select();document.execCommand('copy');const b=event.target;b.textContent='✓ Copiado';setTimeout(()=>b.textContent='Copiar',2000);}
+function cpUrl(){document.getElementById('surl').value=window.location.href;const i=document.getElementById('surl');i.select();document.execCommand('copy');const b=event.target;b.textContent=u('copied');setTimeout(()=>b.textContent=u('copy'),2000);}
 function shareView(){
   const url=new URL(window.location.href);
   url.searchParams.set('view',S.view);
@@ -1312,42 +1333,15 @@ function rAll(){rTabs();rBatch();rIngs();rSteps();rFerm();rJ();}
 
 // ══════════════ INIT ══════════════
 ld();
+applySharedViewFromUrl();
 document.getElementById('kt').value=S.kt||22;
 document.getElementById('langbtn').textContent=S.lang==='es'?'FR':'ES';
-document.querySelector('.logo').innerHTML=u('logo');
-// Update nav buttons on load
-const _nbs=document.querySelectorAll('.nb');
-const _navKeys=['recipes','week','history','shopping'];
-_nbs.forEach((b,i)=>{if(_navKeys[i])b.textContent=u(_navKeys[i]);});
-// Update static elements on load
-document.getElementById('ct-qty').textContent=u('quantities');
-document.getElementById('ct-ing').textContent=u('ingredients');
-document.getElementById('ct-ferm').textContent=u('fermentation');
-document.getElementById('jhead-title').textContent=u('journal');
-document.getElementById('jt-all').textContent=u('all');
-document.getElementById('jt-past').textContent=u('results');
-document.getElementById('jt-next').textContent=u('upcoming');
-document.getElementById('etb-past').textContent=u('result');
-document.getElementById('etb-next').textContent=u('next');
-document.getElementById('etb-idea').textContent=u('idea');
-document.getElementById('score-label').textContent=u('score');
-document.getElementById('jtxt').placeholder=u('placeholder');
-document.getElementById('photo-label').innerHTML=u('addPhoto')+'<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)">';
-document.getElementById('btn-addnote').textContent=u('addNote');
-document.getElementById('btn-resetsteps').textContent=u('resetSteps');
-document.getElementById('btn-prev').textContent=u('prev');
-document.getElementById('btn-nextw').textContent=u('nextW');
-document.getElementById('btn-today').textContent=u('today');
-document.getElementById('ct-weeksum').textContent=u('weekSummary');
-document.getElementById('history-title').textContent=u('historyTitle');
-document.getElementById('ct-chart').textContent=u('chartTitle');
-document.getElementById('shopping-title').textContent=u('shoppingTitle');
-document.getElementById('tp-title').textContent=u('timer');
-document.getElementById('sharebtn').textContent=S.lang==='fr'?'🔗 Partager la vue':'🔗 Compartir vista';
+refreshStaticUIText();
 document.getElementById('hsort').value=S.hsort||'recent';
 upTemp();
 rAll();
 rHist();
+gv(S.view);
 </script>
 </body>
 </html>
