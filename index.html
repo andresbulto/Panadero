@@ -303,6 +303,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 ::-webkit-scrollbar-thumb{background:var(--bdrS);border-radius:2px}
 @media print{header,.tpanel,.jform,.btnp,.btns,.tbtn,.sck,.tpcl{display:none!important}.app{padding:0}.sli.ck{display:none}}
 @media(max-width:700px){.hi{display:grid;grid-template-columns:1fr auto;align-items:center}.logo{grid-column:1/2}.lang-btn{grid-column:2/3;justify-self:end}.tw{grid-column:1/-1;justify-content:center;padding:7px 14px}.tw label{font-size:18px}.ti{font-size:22px;width:42px}nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%}.nb{padding:8px 10px;border-radius:12px;text-align:center}.rtabs{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.rtab{min-width:168px}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
@@ -310,21 +311,22 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 <header>
   <div class="hi">
     <div class="logo">El Diario <em>de Ganons</em></div>
-    <nav>
-      <button class="nb on" onclick="gv('recipe')">📖 Recetas</button>
-      <button class="nb" onclick="gv('week')">📅 Semana</button>
-      <button class="nb" onclick="gv('history')">🏆 Historial</button>
-      <button class="nb" onclick="gv('shopping')">🛒 Compra</button>
+    <nav aria-label="Navegación principal">
+      <button type="button" class="nb on" onclick="gv('recipe')">📖 Recetas</button>
+      <button type="button" class="nb" onclick="gv('week')">📅 Semana</button>
+      <button type="button" class="nb" onclick="gv('history')">🏆 Historial</button>
+      <button type="button" class="nb" onclick="gv('shopping')">🛒 Compra</button>
     </nav>
     <div class="tw">
-      <label>🌡</label>
-      <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()"><span style="color:#fff;font-size:20px;font-weight:700;font-family:var(--font-m)">°C</span>
+      <label for="kt">🌡</label>
+      <input class="ti" type="number" id="kt" value="22" min="14" max="35" onchange="upTemp()" aria-label="Temperatura de la cocina"><span style="color:#fff;font-size:20px;font-weight:700;font-family:var(--font-m)">°C</span>
       <span class="tbg tc" id="tbadge">Normal</span>
     </div>
-    <button class="lang-btn" id="sharebtn" onclick="shareView()">🔗 Compartir vista</button>
-    <button class="lang-btn" id="langbtn" onclick="toggleLang()">FR</button>
+    <button type="button" class="lang-btn" id="sharebtn" onclick="shareView()">🔗 Compartir vista</button>
+    <button type="button" class="lang-btn" id="langbtn" onclick="toggleLang()" aria-label="Cambiar idioma">FR</button>
   </div>
 </header>
+<div id="app-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
 <div class="app">
 
@@ -351,7 +353,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
           </div>
         </div>
         <div class="jbody">
-          <div class="jentries" id="jentries"></div>
+          <div class="jentries" id="jentries" aria-live="polite"></div>
           <div class="jform">
             <div class="etrow">
               <button class="etb on" onclick="setET('past',this)" id="etb-past">📋 Resultado</button>
@@ -366,9 +368,9 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
               <button class="sstar" onclick="setIS(4)">★</button>
               <button class="sstar" onclick="setIS(5)">★</button>
             </div>
-            <textarea class="jta" id="jtxt" placeholder="Escribe aquí tus notas..."></textarea>
+            <textarea class="jta" id="jtxt" placeholder="Escribe aquí tus notas..." aria-label="Notas del diario"></textarea>
             <div class="photrow">
-              <label class="plbl" id="photo-label">📷 Añadir foto<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)"></label>
+              <label class="plbl" id="photo-label">📷 Añadir foto<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)" aria-label="Añadir foto a la nota"></label>
               <img class="pprev" id="pprev" alt="">
               <span id="pname" style="font-size:10px;color:var(--ink-f)"></span>
             </div>
@@ -406,7 +408,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
     <button class="btns" style="padding:4px 10px;font-size:11px" onclick="cw(0)" id="btn-today">Hoy</button>
   </div>
   <div class="wgrid" id="wgrid"></div>
-  <div class="wlist" id="wlist"></div>
+  <div class="wlist" id="wlist" aria-live="polite"></div>
   <div class="card" style="margin-top:12px">
     <div class="ct" id="ct-weeksum">Resumen de la Semana</div>
     <div id="wplan" style="font-size:13px;line-height:2.1;color:var(--ink-m)"></div>
@@ -435,7 +437,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
       <option value="best">Mejor valoradas</option>
     </select>
   </div>
-  <div class="hgrid" id="hgrid"></div>
+  <div class="hgrid" id="hgrid" aria-live="polite"></div>
 </div>
 
 <!-- SHOPPING -->
@@ -443,7 +445,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
   <h2 style="font-family:var(--font-d);font-size:21px;margin-bottom:13px" id="shopping-title">🛒 Lista de Compra</h2>
   <div class="slayout">
     <div id="plancards"></div>
-    <div id="slcont"><div class="empty"><div class="ei">🛒</div><div style="font-family:var(--font-d);font-size:17px;margin-bottom:5px">Planifica tu semana</div><div style="font-size:13px">Selecciona las recetas que harás.</div></div></div>
+    <div id="slcont" aria-live="polite"><div class="empty"><div class="ei">🛒</div><div style="font-family:var(--font-d);font-size:17px;margin-bottom:5px">Planifica tu semana</div><div style="font-size:13px">Selecciona las recetas que harás.</div></div></div>
   </div>
 </div>
 
@@ -451,7 +453,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 
 <!-- TIMER -->
 <div class="tpanel" id="tpanel">
-  <button class="tpcl" onclick="closeT()">✕</button>
+  <button type="button" class="tpcl" onclick="closeT()" aria-label="Cerrar temporizador">✕</button>
   <div class="tptitle" id="tp-title">⏱ Temporizador</div>
   <div class="tpname" id="tpname"></div>
   <div class="tpclock" id="tpclock">00:00</div>
@@ -463,13 +465,13 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 </div>
 
 <div class="overlay" id="mshare">
-  <div class="modal">
-    <div class="mh"><h3>🔗 Compartir</h3><button class="mcl" onclick="closeM('mshare')">✕</button></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div class="mh"><h3 id="share-modal-title">🔗 Compartir</h3><button type="button" class="mcl" onclick="closeM('mshare')" aria-label="Cerrar">✕</button></div>
     <div class="mb">
       <p style="font-size:13px;color:var(--ink-m);margin-bottom:9px">Comparte este enlace:</p>
       <div style="display:flex;gap:7px">
-        <input id="surl" type="text" value="" style="flex:1;border:1.5px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:12px;font-family:var(--font-m)" readonly>
-        <button class="btnp" onclick="cpUrl()">Copiar</button>
+        <input id="surl" type="text" value="" style="flex:1;border:1.5px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:12px;font-family:var(--font-m)" readonly aria-label="Enlace para compartir">
+        <button type="button" class="btnp" onclick="cpUrl()">Copiar</button>
       </div>
       <p style="margin-top:11px;font-size:11px;color:var(--ink-f);font-style:italic">Comparte la vista actual (pantalla, receta, idioma, temperatura, semana y filtro principal). No comparte notas, checks, historial local ni fotos.</p>
     </div>
@@ -792,6 +794,7 @@ es:{
   shoppingTitle:'\ud83d\uded2 Lista de Compra',planWeek:'Planifica tu semana',selectRecipes:'Selecciona las recetas que har\u00e1s.',
   timer:'\u23f1 Temporizador',start:'\u25b6 Iniciar',pause:'\u23f8 Pausar',resume:'\u25b6 Continuar',reset:'\u21ba Reset',done:'\u2713 Terminado',
   share:'\ud83d\udd17 Compartir',shareView:'\ud83d\udd17 Compartir vista',shareTitle:'\ud83d\udd17 Compartir',shareText:'Comparte este enlace:',copy:'Copiar',copied:'\u2713 Copiado',sharePrivacy:'Comparte la vista actual (pantalla, receta, idioma, temperatura, semana y filtro principal). No comparte notas, checks, historial local ni fotos.',
+  close:'Cerrar',tempInputLabel:'Temperatura de la cocina',languageToggle:'Cambiar idioma',shareUrlLabel:'Enlace para compartir',journalNotesLabel:'Notas del diario',photoInputLabel:'Añadir foto a la nota',noteRequired:'Escribe una nota antes de guardarla.',noteSaved:'Nota guardada.',photoSelected:'Foto seleccionada:',viewReady:'Vista lista para compartir.',linkCopied:'Enlace copiado al portapapeles.',
   localNote:'Notas y fotos guardadas localmente en este navegador.',
   steps:'pasos',qty:'Cant:',print:'\ud83d\udda8 Imprimir',
   noNotes:'Sin notas a\u00fan. \u00a1Empieza a registrar tus intentos!',
@@ -828,6 +831,7 @@ fr:{
   shoppingTitle:'\ud83d\uded2 Liste de Courses',planWeek:'Planifiez votre semaine',selectRecipes:'S\u00e9lectionnez les recettes \u00e0 pr\u00e9parer.',
   timer:'\u23f1 Minuteur',start:'\u25b6 D\u00e9marrer',pause:'\u23f8 Pause',resume:'\u25b6 Reprendre',reset:'\u21ba Reset',done:'\u2713 Termin\u00e9',
   share:'\ud83d\udd17 Partager',shareView:'\ud83d\udd17 Partager la vue',shareTitle:'\ud83d\udd17 Partager',shareText:'Partagez ce lien :',copy:'Copier',copied:'\u2713 Copi\u00e9',sharePrivacy:'Partage la vue actuelle (\u00e9cran, recette, langue, temp\u00e9rature, semaine et filtre principal). Ne partage pas les notes, les cases coch\u00e9es, l\'historique local ni les photos.',
+  close:'Fermer',tempInputLabel:'Température de la cuisine',languageToggle:'Changer de langue',shareUrlLabel:'Lien à partager',journalNotesLabel:'Notes du journal',photoInputLabel:'Ajouter une photo à la note',noteRequired:'Écrivez une note avant de l’enregistrer.',noteSaved:'Note enregistrée.',photoSelected:'Photo sélectionnée :',viewReady:'Vue prête à être partagée.',linkCopied:'Lien copié dans le presse-papiers.',
   localNote:'Notes et photos enregistr\u00e9es localement dans ce navigateur.',
   steps:'\u00e9tapes',qty:'Qt\u00e9 :',print:'\ud83d\udda8 Imprimer',
   noNotes:'Aucune note pour le moment. Commencez \u00e0 enregistrer vos essais !',
@@ -852,6 +856,8 @@ fr:{
 
 function u(key){return UI[S.lang][key];}
 function CR(){return S.lang==='fr'?R_FR:R;}
+function announce(msg){const el=document.getElementById('app-status');if(!el)return;el.textContent='';setTimeout(()=>{el.textContent=msg;},30);}
+let lastFocusedEl=null;
 function refreshStaticUIText(){
   document.querySelector('.logo').innerHTML=u('logo');
   const nbs=document.querySelectorAll('.nb');
@@ -869,7 +875,12 @@ function refreshStaticUIText(){
   document.getElementById('etb-idea').textContent=u('idea');
   document.getElementById('score-label').textContent=u('score');
   document.getElementById('jtxt').placeholder=u('placeholder');
-  document.getElementById('photo-label').innerHTML=u('addPhoto')+'<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)">';
+  document.getElementById('jtxt').setAttribute('aria-label',u('journalNotesLabel'));
+  document.getElementById('kt').setAttribute('aria-label',u('tempInputLabel'));
+  document.getElementById('langbtn').setAttribute('aria-label',u('languageToggle'));
+  document.getElementById('surl').setAttribute('aria-label',u('shareUrlLabel'));
+  document.querySelector('#mshare .mcl').setAttribute('aria-label',u('close'));
+  document.getElementById('photo-label').innerHTML=u('addPhoto')+'<input type="file" id="pfile" accept="image/*" onchange="prevPhoto(this)" aria-label="'+u('photoInputLabel')+'">';
   document.getElementById('btn-addnote').textContent=u('addNote');
   document.getElementById('btn-resetsteps').textContent=u('resetSteps');
   document.getElementById('btn-prev').textContent=u('prev');
@@ -892,6 +903,7 @@ function toggleLang(){
   refreshStaticUIText();
   rAll();upTemp();
   if(S.view==='shopping')rShop();
+  announce(S.lang==='fr'?'Français activé.':'Español activado.');
   if(S.view==='week')rWeek();
   if(S.view==='history')rHist();
   sv();
@@ -1117,15 +1129,15 @@ function tDone(){
 function setJT(t,b){S.jt=t;document.querySelectorAll('.jt').forEach(x=>x.classList.remove('on'));b.classList.add('on');rJ();}
 function setET(t,b){S.et=t;document.querySelectorAll('.etb').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById('scorerow').style.display=(t==='past'?'flex':'none');}
 function setIS(n){S.is=S.is===n?null:n;document.querySelectorAll('#scorerow .sstar').forEach((s,i)=>s.classList.toggle('on',S.is!==null&&i<S.is));}
-function prevPhoto(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=e=>{S.pp=e.target.result;const img=document.getElementById('pprev');img.src=e.target.result;img.style.display='block';document.getElementById('pname').textContent=f.name;};rd.readAsDataURL(f);}
+function prevPhoto(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=e=>{S.pp=e.target.result;const img=document.getElementById('pprev');img.src=e.target.result;img.alt=f.name;img.style.display='block';document.getElementById('pname').textContent=f.name;announce(`${u('photoSelected')} ${f.name}`);};rd.readAsDataURL(f);}
 function addE(){
-  const txt=document.getElementById('jtxt').value.trim();if(!txt)return;
+  const txt=document.getElementById('jtxt').value.trim();if(!txt){announce(u('noteRequired'));document.getElementById('jtxt').focus();return;}
   const now=new Date();const loc=S.lang==='fr'?'fr-FR':'es-ES';const date=now.toLocaleDateString(loc,{weekday:'short',day:'numeric',month:'short'});
   S.j[S.r].unshift({type:S.et,date,text:txt,score:S.et==='past'?S.is:null,photo:S.pp,id:Date.now()});
   document.getElementById('jtxt').value='';S.pp=null;S.is=null;
   document.getElementById('pprev').style.display='none';document.getElementById('pname').textContent='';document.getElementById('pfile').value='';
   document.querySelectorAll('#scorerow .sstar').forEach(s=>s.classList.remove('on'));
-  rJ();sv();
+  rJ();sv();announce(u('noteSaved'));
 }
 function delE(rid,eid){S.j[rid]=S.j[rid].filter(e=>e.id!==eid);rJ();sv();}
 function rJ(){
@@ -1137,7 +1149,7 @@ function rJ(){
       return `<div class="entry ${t.ec}">
         <button class="edel" onclick="delE('${S.r}',${e.id})">✕</button>
         <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:''}</div>
-        <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="" loading="lazy"></div>`:''}
+        <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="${u('addPhoto')}" loading="lazy"></div>`:''}
       </div>`;
     }).join('');
 }
@@ -1162,7 +1174,7 @@ function rHist(){
   document.getElementById('hgrid').innerHTML=fl.length===0
     ?`<div style="color:var(--ink-f);font-style:italic;padding:22px;font-size:13px">${u('noHistory')}</div>`
     :fl.map(e=>`<div class="hcard">
-      <div class="hphoto">${e.photo?`<img src="${e.photo}" alt="">`:`${e.icon}`}</div>
+      <div class="hphoto">${e.photo?`<img src="${e.photo}" alt="${e.rname}" loading="lazy">`:`${e.icon}`}</div>
       <div class="hbody">
         <span class="hrb">${e.icon} ${e.rname}</span>
         <div class="hname">${e.text.substring(0,48)}${e.text.length>48?'…':''}</div>
@@ -1312,9 +1324,9 @@ function setPQ(id,v){S.sh[id].q=Math.max(1,Math.min(20,parseInt(v)||1));sv();}
 function tgSl(k){S.slck[k]=!S.slck[k];rShop();sv();}
 
 // ══════════════ MODAL ══════════════
-function openM(id){document.getElementById(id).classList.add('open');}
-function closeM(id){document.getElementById(id).classList.remove('open');}
-function cpUrl(){document.getElementById('surl').value=window.location.href;const i=document.getElementById('surl');i.select();document.execCommand('copy');const b=event.target;b.textContent=u('copied');setTimeout(()=>b.textContent=u('copy'),2000);}
+function openM(id){lastFocusedEl=document.activeElement;const el=document.getElementById(id);el.classList.add('open');setTimeout(()=>{const input=el.querySelector('input,button,[tabindex]:not([tabindex="-1"])');if(input)input.focus();},30);}
+function closeM(id){const el=document.getElementById(id);el.classList.remove('open');if(lastFocusedEl&&typeof lastFocusedEl.focus==='function')lastFocusedEl.focus();}
+async function cpUrl(){const i=document.getElementById('surl');i.select();try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(i.value);else document.execCommand('copy');const b=event.target;b.textContent=u('copied');announce(u('linkCopied'));setTimeout(()=>b.textContent=u('copy'),2000);}catch(_){document.execCommand('copy');announce(u('linkCopied'));}}
 function shareView(){
   const url=new URL(window.location.href);
   url.searchParams.set('view',S.view);
@@ -1325,8 +1337,10 @@ function shareView(){
   url.searchParams.set('history',S.hf);
   document.getElementById('surl').value=url.toString();
   openM('mshare');
+  announce(u('viewReady'));
 }
-document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeM(o.id);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>closeM(o.id));});
 
 // ══════════════ RENDER ALL ══════════════
 function rAll(){rTabs();rBatch();rIngs();rSteps();rFerm();rJ();}
