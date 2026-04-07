@@ -1007,7 +1007,7 @@ function rBatch(){
     <input class="qi" type="number" value="${b}" min="1" max="20" onchange="setB(this.value)">
     <button class="qb" onclick="chB(1)">+</button></div></div>
     <div style="font-size:10px;color:var(--ink-f);font-style:italic;margin-bottom:7px">${r.bn}</div>`;
-  if(r.hs){h+=`<div style="font-size:11px;color:var(--ink-m);margin-bottom:3px">Tamaño</div><div class="szbtns">${r.sizes.map(s=>`<button class="szb ${(S.sz[r.id]||r.ds)===s?'on':''}" onclick="setSz('${s}')">${s}</button>`).join('')}</div>`;}
+  if(r.hs){const curSz=r.sizes.includes(S.sz[r.id])?S.sz[r.id]:r.ds;h+=`<div style="font-size:11px;color:var(--ink-m);margin-bottom:3px">Tamaño</div><div class="szbtns">${r.sizes.map(s=>`<button class="szb ${curSz===s?'on':''}" onclick="setSz('${s}')">${s}</button>`).join('')}</div>`;}
   document.getElementById('bctrl').innerHTML=h;
 }
 function chB(d){S.b[S.r]=Math.max(1,Math.min(20,S.b[S.r]+d));rBatch();rIngs();sv();}
@@ -1018,7 +1018,7 @@ function setSz(s){S.sz[S.r]=s;rBatch();rIngs();sv();}
 function fq(q,m){const v=q*m;return v<10?parseFloat(v.toFixed(1))+'':Math.round(v).toLocaleString('es');}
 function rIngs(){
   const r=CR()[S.r];let m=S.b[S.r]/r.db;
-  if(r.szw){const sz=S.sz[S.r]||r.ds;m=m*(r.szw[sz]/r.szw[r.ds]);}
+  if(r.szw){const sz=(S.sz[S.r]&&r.szw[S.sz[S.r]])?S.sz[S.r]:r.ds;m=m*(r.szw[sz]/r.szw[r.ds]);}
   let h='';
   r.ings.forEach(sec=>{
     h+=`<div class="isec">${sec.s}</div>`;
