@@ -853,10 +853,47 @@ fr:{
   astucia:'Astuce',
   planner:'Planificateur',allRecipes:'Toutes',eatLabel:'Je veux manger le :',eatAt:'\u00e0',
   wDayNames:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi']
+},
+en:{
+  logo:'The Diary <em>of Ganons</em>',
+  recipes:'\ud83d\udcd6 Recipes',week:'\ud83d\udcc5 Week',history:'\ud83c\udfc6 History',shopping:'\ud83d\uded2 Shopping',
+  quantities:'\u2696\ufe0f Quantities',ingredients:'\ud83c\udf3e Ingredients',fermentation:'\ud83e\uddec Fermentation',
+  journal:'\u270d\ufe0f Baking Journal',
+  all:'All',results:'Results',upcoming:'Upcoming',ideas:'Ideas',
+  result:'\ud83d\udccb Result',next:'\ud83c\udfaf Next',idea:'\ud83d\udca1 Idea',
+  score:'Score:',placeholder:'Write your notes here...',
+  addPhoto:'\ud83d\udcf7 Add photo',addNote:'Add note',resetSteps:'Reset steps',
+  prev:'\u2190 Previous',nextW:'Next \u2192',today:'Today',
+  weekSummary:'\ud83d\uddd3 Week Summary',
+  historyTitle:'\ud83c\udfc6 Baking History',chartTitle:'\ud83d\udcc8 Score Evolution',
+  shoppingTitle:'\ud83d\uded2 Shopping List',planWeek:'Plan your week',selectRecipes:'Select the recipes you\'ll make.',
+  timer:'\u23f1 Timer',start:'\u25b6 Start',pause:'\u23f8 Pause',resume:'\u25b6 Resume',reset:'\u21ba Reset',done:'\u2713 Done',
+  share:'\ud83d\udd17 Share',shareView:'\ud83d\udd17 Share view',shareTitle:'\ud83d\udd17 Share',shareText:'Share this link:',copy:'Copy',copied:'\u2713 Copied',sharePrivacy:'Shares the current view (screen, recipe, language, temperature, week and main filter). Does not share notes, checkmarks, local history or photos.',
+  close:'Close',tempInputLabel:'Kitchen temperature',languageToggle:'Change language',shareUrlLabel:'Share link',journalNotesLabel:'Journal notes',photoInputLabel:'Add photo to note',noteRequired:'Write a note before saving.',noteSaved:'Note saved.',photoSelected:'Photo selected:',viewReady:'View ready to share.',linkCopied:'Link copied to clipboard.',
+  localNote:'Notes and photos saved locally in this browser.',
+  steps:'steps',qty:'Qty:',print:'\ud83d\udda8 Print',
+  noNotes:'No notes yet. Start recording your attempts!',
+  noScores:'No scores yet',noHistory:'No bakes recorded yet.',noEvents:'No events this week.',
+  noDate:'No date',noScore:'No score',
+  catFlour:'\ud83c\udf3e Flours',catFerment:'\ud83e\uddec Ferments',catLiquid:'\ud83d\udca7 Liquids',catSalt:'\ud83e\uddc2 Salt & spices',catOther:'\ud83d\udce6 Other',
+  shoppingList:'Shopping List',
+  fermTitle:'Times at',fermBase:'base',fermAt:'\u2192 At',
+  fermWarnHot:'\u26a0 Very active fermentation. Watch closely and reduce times.',
+  fermWarnCold:'\ud83e\udd76 Slow fermentation. May need more time.',
+  fermAdj:'Adjusted time:',fermBy:'by kitchen temperature',
+  pastLabel:'Result',nextLabel:'Next',ideaLabel:'Idea',
+  notifDone:'Done',notifReady:'Ready!',
+  remaining:'remaining',
+  dayNames:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+  tempCool:'Cool',tempNormal:'Normal',tempHot:'Hot',
+  masterTips:'\u26a1 Master Tips',
+  astucia:'Tip',
+  planner:'Planner',allRecipes:'All',eatLabel:'I want to eat on:',eatAt:'at',
+  wDayNames:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
 }};
 
 function u(key){return UI[S.lang][key];}
-function CR(){return S.lang==='fr'?R_FR:R;}
+function CR(){return S.lang==='fr'?R_FR:R;} // EN uses Spanish recipes with English UI
 function announce(msg){const el=document.getElementById('app-status');if(!el)return;el.textContent='';setTimeout(()=>{el.textContent=msg;},30);}
 let lastFocusedEl=null;
 function refreshStaticUIText(){
@@ -900,12 +937,12 @@ function refreshStaticUIText(){
   document.querySelector('#mshare .mb p:last-child').textContent=u('sharePrivacy');
 }
 function toggleLang(){
-  S.lang=S.lang==='es'?'fr':'es';
-  document.getElementById('langbtn').textContent=S.lang==='es'?'FR':'ES';
+  S.lang=S.lang==='es'?'fr':S.lang==='fr'?'en':'es';
+  document.getElementById('langbtn').textContent=S.lang==='es'?'FR':S.lang==='fr'?'EN':'ES';
   refreshStaticUIText();
   rAll();upTemp();
   if(S.view==='shopping')rShop();
-  announce(S.lang==='fr'?'Français activé.':'Español activado.');
+  announce(S.lang==='es'?'Español activado.':S.lang==='fr'?'Français activé.':'English activated.');
   if(S.view==='week')rWeek();
   if(S.view==='history')rHist();
   sv();
