@@ -350,6 +350,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
             <button class="jt on" onclick="setJT('all',this)" id="jt-all">Todo</button>
             <button class="jt" onclick="setJT('past',this)" id="jt-past">Resultados</button>
             <button class="jt" onclick="setJT('next',this)" id="jt-next">Próximos</button>
+            <button class="jt" onclick="setJT('idea',this)" id="jt-idea">Ideas</button>
           </div>
         </div>
         <div class="jbody">
@@ -784,7 +785,7 @@ es:{
   recipes:'\ud83d\udcd6 Recetas',week:'\ud83d\udcc5 Semana',history:'\ud83c\udfc6 Historial',shopping:'\ud83d\uded2 Compra',
   quantities:'\u2696\ufe0f Cantidades',ingredients:'\ud83c\udf3e Ingredientes',fermentation:'\ud83e\uddec Fermentaci\u00f3n',
   journal:'\u270d\ufe0f Diario de Intentos',
-  all:'Todo',results:'Resultados',upcoming:'Pr\u00f3ximos',
+  all:'Todo',results:'Resultados',upcoming:'Pr\u00f3ximos',ideas:'Ideas',
   result:'\ud83d\udccb Resultado',next:'\ud83c\udfaf Pr\u00f3ximo',idea:'\ud83d\udca1 Idea',
   score:'Nota:',placeholder:'Escribe aqu\u00ed tus notas...',
   addPhoto:'\ud83d\udcf7 A\u00f1adir foto',addNote:'A\u00f1adir nota',resetSteps:'Reiniciar pasos',
@@ -821,7 +822,7 @@ fr:{
   recipes:'\ud83d\udcd6 Recettes',week:'\ud83d\udcc5 Semaine',history:'\ud83c\udfc6 Historique',shopping:'\ud83d\uded2 Courses',
   quantities:'\u2696\ufe0f Quantit\u00e9s',ingredients:'\ud83c\udf3e Ingr\u00e9dients',fermentation:'\ud83e\uddec Fermentation',
   journal:'\u270d\ufe0f Journal des Essais',
-  all:'Tout',results:'R\u00e9sultats',upcoming:'\u00c0 venir',
+  all:'Tout',results:'R\u00e9sultats',upcoming:'\u00c0 venir',ideas:'Id\u00e9es',
   result:'\ud83d\udccb R\u00e9sultat',next:'\ud83c\udfaf Prochain',idea:'\ud83d\udca1 Id\u00e9e',
   score:'Note :',placeholder:'\u00c9crivez vos notes ici...',
   addPhoto:'\ud83d\udcf7 Ajouter photo',addNote:'Ajouter note',resetSteps:'R\u00e9initialiser \u00e9tapes',
@@ -870,6 +871,7 @@ function refreshStaticUIText(){
   document.getElementById('jt-all').textContent=u('all');
   document.getElementById('jt-past').textContent=u('results');
   document.getElementById('jt-next').textContent=u('upcoming');
+  document.getElementById('jt-idea').textContent=u('ideas');
   document.getElementById('etb-past').textContent=u('result');
   document.getElementById('etb-next').textContent=u('next');
   document.getElementById('etb-idea').textContent=u('idea');
@@ -1158,6 +1160,15 @@ function completeE(rid,eid){
   });
   rJ();sv();
 }
+function promoteE(rid,eid){
+  const now=new Date();const loc=S.lang==='fr'?'fr-FR':'es-ES';
+  const date=now.toLocaleDateString(loc,{weekday:'short',day:'numeric',month:'short'});
+  S.j[rid]=S.j[rid].map(e=>{
+    if(e.id===eid){return {...e,type:'next',date};}
+    return e;
+  });
+  rJ();sv();
+}
 function rJ(){
   const es=S.j[S.r]||[];const fl=S.jt==='all'?es:es.filter(e=>e.type===S.jt);
   const tp={past:{lb:u('pastLabel'),c:'bp',ec:'past'},next:{lb:u('nextLabel'),c:'bn',ec:'next'},idea:{lb:u('ideaLabel'),c:'bi',ec:'idea'}};
@@ -1165,9 +1176,11 @@ function rJ(){
     ?`<div style="text-align:center;color:var(--ink-f);font-style:italic;padding:18px;font-size:13px">${u('noNotes')}</div>`
     :fl.map(e=>{const t=tp[e.type]||tp.idea;const stars=e.score?'★'.repeat(e.score)+'☆'.repeat(5-e.score):'';
       const doneBtn=e.type==='next'?`<button style="background:var(--sage);color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:10px;margin-left:auto;cursor:pointer" onclick="completeE('${S.r}',${e.id})" ontouchend="completeE('${S.r}',${e.id});event.preventDefault()">✓ ${S.lang==='fr'?'Fait':'Hecho'}</button>`:'';
+      const promoteBtn=e.type==='idea'?`<button style="background:var(--blue);color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:10px;margin-left:auto;cursor:pointer" onclick="promoteE('${S.r}',${e.id})" ontouchend="promoteE('${S.r}',${e.id});event.preventDefault()">→ ${S.lang==='fr'?'Prochain':'Próximo'}</button>`:'';
+      const actionBtn=e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:doneBtn||promoteBtn;
       return `<div class="entry ${t.ec}">
         <button class="edel" onclick="delE('${S.r}',${e.id})">✕</button>
-        <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:doneBtn}</div>
+        <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${actionBtn}</div>
         <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="${u('addPhoto')}" loading="lazy"></div>`:''}
       </div>`;
     }).join('');
