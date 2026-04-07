@@ -1012,7 +1012,7 @@ function rBatch(){
 }
 function chB(d){S.b[S.r]=Math.max(1,Math.min(20,S.b[S.r]+d));rBatch();rIngs();sv();}
 function setB(v){S.b[S.r]=Math.max(1,Math.min(20,parseInt(v)||1));rIngs();sv();}
-function setSz(s){S.sz[S.r]=s;rBatch();rIngs();sv();}
+function setSz(s){console.log('setSz called with:',s,'for recipe:',S.r);S.sz[S.r]=s;console.log('S.sz is now:',S.sz);rBatch();rIngs();sv();}
 
 // ══════════════ INGREDIENTS ══════════════
 function fq(q,m){const v=q*m;return v<10?parseFloat(v.toFixed(1))+'':Math.round(v).toLocaleString('es');}
