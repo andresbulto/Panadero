@@ -1145,15 +1145,29 @@ function addE(){
   rJ();sv();announce(u('noteSaved'));
 }
 function delE(rid,eid){S.j[rid]=S.j[rid].filter(e=>e.id!==eid);rJ();sv();}
+function completeE(rid,eid){
+  const scoreStr=prompt(S.lang==='fr'?'Note (1-5 étoiles):':'Puntuación (1-5 estrellas):','3');
+  if(scoreStr===null)return;
+  const score=Math.max(1,Math.min(5,parseInt(scoreStr)||3));
+  const feedback=prompt(S.lang==='fr'?'Feedback (optionnel):':'Feedback (opcional):','');
+  const now=new Date();const loc=S.lang==='fr'?'fr-FR':'es-ES';
+  const date=now.toLocaleDateString(loc,{weekday:'short',day:'numeric',month:'short'});
+  S.j[rid]=S.j[rid].map(e=>{
+    if(e.id===eid){return {...e,type:'past',date,score,text:feedback?e.text+' → '+feedback:e.text};}
+    return e;
+  });
+  rJ();sv();
+}
 function rJ(){
   const es=S.j[S.r]||[];const fl=S.jt==='all'?es:es.filter(e=>e.type===S.jt);
   const tp={past:{lb:u('pastLabel'),c:'bp',ec:'past'},next:{lb:u('nextLabel'),c:'bn',ec:'next'},idea:{lb:u('ideaLabel'),c:'bi',ec:'idea'}};
   document.getElementById('jentries').innerHTML=fl.length===0
     ?`<div style="text-align:center;color:var(--ink-f);font-style:italic;padding:18px;font-size:13px">${u('noNotes')}</div>`
     :fl.map(e=>{const t=tp[e.type]||tp.idea;const stars=e.score?'★'.repeat(e.score)+'☆'.repeat(5-e.score):'';
+      const doneBtn=e.type==='next'?`<button style="background:var(--sage);color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:10px;margin-left:auto;cursor:pointer" onclick="completeE('${S.r}',${e.id})" ontouchend="completeE('${S.r}',${e.id});event.preventDefault()">✓ ${S.lang==='fr'?'Fait':'Hecho'}</button>`:'';
       return `<div class="entry ${t.ec}">
         <button class="edel" onclick="delE('${S.r}',${e.id})">✕</button>
-        <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:''}</div>
+        <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:doneBtn}</div>
         <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="${u('addPhoto')}" loading="lazy"></div>`:''}
       </div>`;
     }).join('');
