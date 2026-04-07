@@ -1002,17 +1002,20 @@ function selR(id){S.r=id;rAll();sv();}
 // ══════════════ BATCH ══════════════
 function rBatch(){
   const r=CR()[S.r];const b=S.b[S.r];
+  let curSz=r.ds;
+  if(r.hs&&r.szw){curSz=r.sizes.includes(S.sz[S.r])?S.sz[S.r]:r.ds;if(!r.sizes.includes(S.sz[S.r]))S.sz[S.r]=r.ds;}
+  const bnTxt=r.szw?`${curSz.replace('in','"')} = ${r.szw[curSz]}g ${S.lang==='fr'?'par boule':'por bola'}`:r.bn;
   let h=`<div class="brow"><span class="bl">${r.unit.charAt(0).toUpperCase()+r.unit.slice(1)}</span>
     <div class="qc"><button class="qb" onclick="chB(-1)">−</button>
     <input class="qi" type="number" value="${b}" min="1" max="20" onchange="setB(this.value)">
     <button class="qb" onclick="chB(1)">+</button></div></div>
-    <div style="font-size:10px;color:var(--ink-f);font-style:italic;margin-bottom:7px">${r.bn}</div>`;
-  if(r.hs){const curSz=r.sizes.includes(S.sz[S.r])?S.sz[S.r]:r.ds;if(!r.sizes.includes(S.sz[S.r]))S.sz[S.r]=r.ds;h+=`<div style="font-size:11px;color:var(--ink-m);margin-bottom:3px">Tamaño</div><div class="szbtns">${r.sizes.map(s=>`<button class="szb ${curSz===s?'on':''}" onclick="setSz('${s}')">${s}</button>`).join('')}</div>`;}
+    <div style="font-size:10px;color:var(--ink-f);font-style:italic;margin-bottom:7px">${bnTxt}</div>`;
+  if(r.hs){h+=`<div style="font-size:11px;color:var(--ink-m);margin-bottom:3px">Tamaño</div><div class="szbtns">${r.sizes.map(s=>`<button class="szb ${curSz===s?'on':''}" onclick="setSz('${s}')" ontouchend="setSz('${s}');event.preventDefault()">${s}</button>`).join('')}</div>`;}
   document.getElementById('bctrl').innerHTML=h;
 }
 function chB(d){S.b[S.r]=Math.max(1,Math.min(20,S.b[S.r]+d));rBatch();rIngs();sv();}
 function setB(v){S.b[S.r]=Math.max(1,Math.min(20,parseInt(v)||1));rIngs();sv();}
-function setSz(s){console.log('setSz called with:',s,'for recipe:',S.r);S.sz[S.r]=s;console.log('S.sz is now:',S.sz);rBatch();rIngs();sv();}
+function setSz(s){S.sz[S.r]=s;rBatch();rIngs();sv();}
 
 // ══════════════ INGREDIENTS ══════════════
 function fq(q,m){const v=q*m;return v<10?parseFloat(v.toFixed(1))+'':Math.round(v).toLocaleString('es');}
