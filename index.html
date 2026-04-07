@@ -333,7 +333,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
       <div class="lang-opts" id="langopts">
         <button type="button" onclick="setLang('es')">🇪🇸 Español</button>
         <button type="button" onclick="setLang('fr')">🇫🇷 Français</button>
-        <button type="button" onclick="setLang('en')">🇬🇧 English</button>
+        <button type="button" onclick="setLang('en')">🇺🇸 English</button>
       </div>
     </div>
   </div>
@@ -1102,7 +1102,7 @@ function toggleLangMenu(){
 }
 function setLang(lang){
   S.lang=lang;
-  const flags={es:'🇪🇸 ES',fr:'🇫🇷 FR',en:'🇬🇧 EN'};
+  const flags={es:'🇪🇸 ES',fr:'🇫🇷 FR',en:'🇺🇸 EN'};
   document.getElementById('langbtn').textContent=flags[lang]+' ▾';
   document.getElementById('langopts').classList.remove('open');
   refreshStaticUIText();
@@ -1209,7 +1209,7 @@ function rBatch(){
   const r=CR()[S.r];const b=S.b[S.r];
   let curSz=r.ds;
   if(r.hs&&r.szw){curSz=r.sizes.includes(S.sz[S.r])?S.sz[S.r]:r.ds;if(!r.sizes.includes(S.sz[S.r]))S.sz[S.r]=r.ds;}
-  const bnTxt=r.szw?`${curSz.replace('in','"')} = ${r.szw[curSz]}g ${S.lang==='fr'?'par boule':'por bola'}`:r.bn;
+  const bnTxt=r.szw?`${curSz.replace('in','"')} = ${r.szw[curSz]}g ${S.lang==='fr'?'par boule':S.lang==='en'?'per ball':'por bola'}`:r.bn;
   let h=`<div class="brow"><span class="bl">${r.unit.charAt(0).toUpperCase()+r.unit.slice(1)}</span>
     <div class="qc"><button class="qb" onclick="chB(-1)">−</button>
     <input class="qi" type="number" value="${b}" min="1" max="20" onchange="setB(this.value)">
@@ -1585,7 +1585,7 @@ function rAll(){rTabs();rBatch();rIngs();rSteps();rFerm();rJ();}
 ld();
 applySharedViewFromUrl();
 document.getElementById('kt').value=S.kt||22;
-const flags={es:'🇪🇸 ES',fr:'🇫🇷 FR',en:'🇬🇧 EN'};document.getElementById('langbtn').textContent=flags[S.lang]+' ▾';
+const flags={es:'🇪🇸 ES',fr:'🇫🇷 FR',en:'🇺🇸 EN'};document.getElementById('langbtn').textContent=flags[S.lang]+' ▾';
 refreshStaticUIText();
 document.getElementById('hsort').value=S.hsort||'recent';
 upTemp();
