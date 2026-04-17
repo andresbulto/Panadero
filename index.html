@@ -1502,25 +1502,31 @@ function calcBackPlan(r,targetDate,targetTime){
   // Check for night hours (22:00-07:00) and adjust if needed
   let adjusted=false;
   let maxShift=0;
-  // Check each event for night hours collision
+  // Check each event for night hours collision - shift target LATER to push events to 07:00+
   we.forEach(ev=>{
     const [evH,evM]=(ev.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
     const evMin=ev.day*1440+evH*60+evM;
     const offsetMin=evMin-lastMin;
     const evDt=new Date(targetDt.getTime()+offsetMin*60000);
     const h=evDt.getHours();
-    // If event falls between 22:00-06:59, calculate shift needed
+    const m=evDt.getMinutes();
+    // If event falls between 22:00-06:59, calculate shift to push it to 07:00
     if(h>=22||h<7){
       let shift=0;
-      if(h>=22){shift=(24-h)*60-evDt.getMinutes()+7*60;} // shift to 07:00 next day
-      else{shift=(7-h)*60-evDt.getMinutes();} // shift to 07:00 same day
+      if(h>=22){
+        // Event at 22:xx-23:xx needs to shift forward to 07:00 next day
+        shift=(24-h)*60-m+7*60;
+      }else{
+        // Event at 00:xx-06:xx needs to shift forward to 07:00 same day
+        shift=(7-h)*60-m;
+      }
       if(shift>maxShift)maxShift=shift;
     }
   });
-  // Apply shift by moving target time earlier
+  // Apply shift by moving target time LATER (so events shift to 07:00+)
   if(maxShift>0){
     adjusted=true;
-    targetDt=new Date(targetDt.getTime()-maxShift*60000);
+    targetDt=new Date(targetDt.getTime()+maxShift*60000);
     startDt=new Date(targetDt.getTime()-durationMin*60000);
   }
   return{startDt,targetDt,startStr:fmt(startDt),readyStr:fmt(targetDt),durationMin,adjusted,shiftMin:maxShift};
