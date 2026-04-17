@@ -1212,7 +1212,7 @@ es:{
   astucia:'Astucia',
   planner:'Planificador',allRecipes:'Todas',eatLabel:'Quiero comer el:',eatAt:'a las',
   wDayNames:['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'],
-  bpTitle:'\ud83c\udfaf \u00bfCu\u00e1ndo quieres comer?',bpDate:'Fecha:',bpTime:'Hora:',bpCalc:'Calcular pasos',bpClear:'Limpiar',bpStart:'Empezar:',bpReady:'Listo:'
+  bpTitle:'\ud83c\udfaf \u00bfCu\u00e1ndo quieres comer?',bpDate:'Fecha:',bpTime:'Hora:',bpCalc:'Calcular pasos',bpClear:'Limpiar',bpStart:'Empezar:',bpReady:'Listo:',bpNightWarn:'Horario ajustado para evitar pasos entre 22:00-07:00'
 },
 fr:{
   logo:'Le Journal <em>de Ganons</em>',
@@ -1250,7 +1250,7 @@ fr:{
   astucia:'Astuce',
   planner:'Planificateur',allRecipes:'Toutes',eatLabel:'Je veux manger le :',eatAt:'\u00e0',
   wDayNames:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
-  bpTitle:'\ud83c\udfaf Quand voulez-vous manger ?',bpDate:'Date :',bpTime:'Heure :',bpCalc:'Calculer \u00e9tapes',bpClear:'Effacer',bpStart:'D\u00e9but :',bpReady:'Pr\u00eat :'
+  bpTitle:'\ud83c\udfaf Quand voulez-vous manger ?',bpDate:'Date :',bpTime:'Heure :',bpCalc:'Calculer \u00e9tapes',bpClear:'Effacer',bpStart:'D\u00e9but :',bpReady:'Pr\u00eat :',bpNightWarn:'Horaire ajust\u00e9 pour \u00e9viter les \u00e9tapes entre 22h-07h'
 },
 en:{
   logo:'The Diary <em>of Ganons</em>',
@@ -1288,7 +1288,7 @@ en:{
   astucia:'Tip',
   planner:'Planner',allRecipes:'All',eatLabel:'I want to eat on:',eatAt:'at',
   wDayNames:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-  bpTitle:'\ud83c\udfaf When do you want to eat?',bpDate:'Date:',bpTime:'Time:',bpCalc:'Calculate steps',bpClear:'Clear',bpStart:'Start:',bpReady:'Ready:'
+  bpTitle:'\ud83c\udfaf When do you want to eat?',bpDate:'Date:',bpTime:'Time:',bpCalc:'Calculate steps',bpClear:'Clear',bpStart:'Start:',bpReady:'Ready:',bpNightWarn:'Schedule adjusted to avoid steps between 22:00-07:00'
 }};
 
 function u(key){return UI[S.lang][key];}
@@ -1452,6 +1452,9 @@ function rBackPlan(){
   if(bp.date){
     const calc=calcBackPlan(r,bp.date,bp.time);
     if(calc){
+      if(calc.adjusted){
+        h+=`<div style="font-size:10px;color:var(--rust);margin-bottom:6px;padding:4px 6px;background:rgba(186,73,73,.1);border-radius:4px">⚠️ ${u('bpNightWarn')}</div>`;
+      }
       h+=`<div style="font-size:11px;color:var(--sage);margin-bottom:6px"><strong>${u('bpStart')}</strong> ${calc.startStr}</div>`;
       h+=`<div style="font-size:11px;color:var(--sage)"><strong>${u('bpReady')}</strong> ${calc.readyStr}</div>`;
     }
@@ -1482,8 +1485,8 @@ function calcBackPlan(r,targetDate,targetTime){
   // Parse target datetime
   const [tY,tM,tD]=targetDate.split('-').map(Number);
   const [tH,tMin]=(targetTime||'14:00').split(':').map(Number);
-  const targetDt=new Date(tY,tM-1,tD,tH,tMin);
-  // Last event time in minutes from start of week (day 0 = Sunday in our system, but we need to map)
+  let targetDt=new Date(tY,tM-1,tD,tH,tMin);
+  // Last event time in minutes from start of week
   const lastDay=lastEv.day;
   const [lastH,lastM]=(lastEv.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
   const firstDay=firstEv.day;
@@ -1493,19 +1496,43 @@ function calcBackPlan(r,targetDate,targetTime){
   const firstMin=firstDay*1440+firstH*60+firstM;
   const durationMin=lastMin-firstMin;
   // Calculate start datetime
-  const startDt=new Date(targetDt.getTime()-durationMin*60000);
+  let startDt=new Date(targetDt.getTime()-durationMin*60000);
   const dn=u('wDayNames');
   const fmt=d=>`${dn[d.getDay()]} ${d.getDate()}/${d.getMonth()+1} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-  return{startDt,targetDt,startStr:fmt(startDt),readyStr:fmt(targetDt),durationMin};
+  // Check for night hours (22:00-07:00) and adjust if needed
+  let adjusted=false;
+  let maxShift=0;
+  // Check each event for night hours collision
+  we.forEach(ev=>{
+    const [evH,evM]=(ev.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
+    const evMin=ev.day*1440+evH*60+evM;
+    const offsetMin=evMin-lastMin;
+    const evDt=new Date(targetDt.getTime()+offsetMin*60000);
+    const h=evDt.getHours();
+    // If event falls between 22:00-06:59, calculate shift needed
+    if(h>=22||h<7){
+      let shift=0;
+      if(h>=22){shift=(24-h)*60-evDt.getMinutes()+7*60;} // shift to 07:00 next day
+      else{shift=(7-h)*60-evDt.getMinutes();} // shift to 07:00 same day
+      if(shift>maxShift)maxShift=shift;
+    }
+  });
+  // Apply shift by moving target time earlier
+  if(maxShift>0){
+    adjusted=true;
+    targetDt=new Date(targetDt.getTime()-maxShift*60000);
+    startDt=new Date(targetDt.getTime()-durationMin*60000);
+  }
+  return{startDt,targetDt,startStr:fmt(startDt),readyStr:fmt(targetDt),durationMin,adjusted,shiftMin:maxShift};
 }
 function getStepDateTime(r,stepIdx){
   const bp=S.bp[S.r];
   if(!bp||!bp.date||!r.we||!r.we.length)return null;
+  // Use calcBackPlan to get adjusted target time (with night avoidance)
+  const calc=calcBackPlan(r,bp.date,bp.time);
+  if(!calc)return null;
   const we=r.we;
   const lastEv=we[we.length-1];
-  const [tY,tM,tD]=bp.date.split('-').map(Number);
-  const [tH,tMin]=(bp.time||'14:00').split(':').map(Number);
-  const targetDt=new Date(tY,tM-1,tD,tH,tMin);
   const lastDay=lastEv.day;
   const [lastH,lastM]=(lastEv.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
   const lastMin=lastDay*1440+lastH*60+lastM;
@@ -1517,7 +1544,7 @@ function getStepDateTime(r,stepIdx){
   const [evH,evM]=(ev.time.match(/(\d+):(\d+)/)||[0,12,0]).slice(1).map(Number);
   const evMin=ev.day*1440+evH*60+evM;
   const offsetMin=evMin-lastMin;
-  const stepDt=new Date(targetDt.getTime()+offsetMin*60000);
+  const stepDt=new Date(calc.targetDt.getTime()+offsetMin*60000);
   const dn=u('wDayNames');
   return`${dn[stepDt.getDay()]} ${stepDt.getDate()}/${stepDt.getMonth()+1} ${String(stepDt.getHours()).padStart(2,'0')}:${String(stepDt.getMinutes()).padStart(2,'0')}`;
 }
