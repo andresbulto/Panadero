@@ -307,7 +307,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bdrS);border-radius:2px}
 @media print{header,.tpanel,.jform,.btnp,.btns,.tbtn,.sck,.tpcl{display:none!important}.app{padding:0}.sli.ck{display:none}}
-@media(max-width:700px){.hi{display:grid;grid-template-columns:1fr auto;align-items:center}.logo{grid-column:1/2}.lang-btn{grid-column:2/3;justify-self:end}.tw{grid-column:1/-1;justify-content:center;padding:7px 14px}.tw label{font-size:18px}.ti{font-size:22px;width:42px}nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;width:100%}.nb{padding:8px 10px;border-radius:12px;text-align:center}.rtabs{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.rtab{min-width:168px}}
+@media(max-width:700px){.hi{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 8px}.logo{grid-column:1/2}.lang-dd{grid-column:2/3;grid-row:1;justify-self:end}#sharebtn{display:none}.tw{grid-column:1/-1;justify-content:center;padding:7px 14px}.tw label{font-size:18px}.ti{font-size:22px;width:42px}nav{grid-column:1/-1;display:flex;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;gap:6px;width:100%;padding-bottom:2px}.nb{padding:7px 13px;border-radius:12px;text-align:center;flex-shrink:0;font-size:12px}.rtabs{overflow:auto;flex-wrap:nowrap;padding-bottom:4px}.rtab{min-width:168px}.sck{width:28px;height:28px;font-size:12px}.tbtn{padding:4px 10px;font-size:12px}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
@@ -330,10 +330,10 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
     <button type="button" class="lang-btn" id="sharebtn" onclick="shareView()">🔗 Compartir vista</button>
     <div class="lang-dd" id="langdd">
       <button type="button" class="lang-btn" id="langbtn" onclick="toggleLangMenu()">🇪🇸 ES ▾</button>
-      <div class="lang-opts" id="langopts">
-        <button type="button" onclick="setLang('es')">🇪🇸 Español</button>
-        <button type="button" onclick="setLang('fr')">🇫🇷 Français</button>
-        <button type="button" onclick="setLang('en')">🇺🇸 English</button>
+      <div class="lang-opts" id="langopts" role="menu" aria-label="Seleccionar idioma">
+        <button type="button" role="menuitem" onclick="setLang('es')">🇪🇸 Español</button>
+        <button type="button" role="menuitem" onclick="setLang('fr')">🇫🇷 Français</button>
+        <button type="button" role="menuitem" onclick="setLang('en')">🇺🇸 English</button>
       </div>
     </div>
   </div>
@@ -433,15 +433,7 @@ nav{display:flex;gap:3px;flex:1;flex-wrap:wrap}
 <div class="view" id="v-history">
   <h2 style="font-family:var(--font-d);font-size:21px;margin-bottom:13px" id="history-title">🏆 Historial de Hornadas</h2>
   <div class="schart"><div class="ct" id="ct-chart">📈 Evolución de Notas</div><div class="cbars" id="cbars"></div></div>
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-all" onclick="setHF('all')">Todo</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-baguette" onclick="setHF('baguette')">🥖 Baguette</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-pizza" onclick="setHF('pizza')">🍕 Pizza</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-coca" onclick="setHF('coca')">🫓 Pa de Coca</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-biga" onclick="setHF('biga')">🫓 Biga</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-pao" onclick="setHF('pao')">🍞 Pão</button>
-    <button class="btns" style="font-size:11px;padding:4px 10px" id="hf-bizcocho" onclick="setHF('bizcocho')">🍰 Bizcocho</button>
-  </div>
+  <div id="hf-row" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"></div>
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
     <button class="btns" style="font-size:11px;padding:4px 10px" id="hsf-all" onclick="setHSF('all')">Todas las notas</button>
     <button class="btns" style="font-size:11px;padding:4px 10px" id="hsf-note" onclick="setHSF('note')">Solo con nota</button>
@@ -1204,7 +1196,7 @@ es:{
   fermWarnCold:'\ud83e\udd76 Fermentaci\u00f3n lenta. Puede necesitar m\u00e1s tiempo.',
   fermAdj:'Tiempo ajustado:',fermBy:'por temperatura de cocina',
   pastLabel:'Resultado',nextLabel:'Pr\u00f3ximo',ideaLabel:'Idea',
-  notifDone:'Terminado',notifReady:'\u00a1Listo!',
+  notifDone:'Terminado',notifReady:'\u00a1Listo!',deleteNote:'Eliminar nota',markDone:'Marcar completado',
   remaining:'quedan',
   dayNames:['Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b','Dom'],
   tempCool:'Fresca',tempNormal:'Normal',tempHot:'Caliente',
@@ -1242,7 +1234,7 @@ fr:{
   fermWarnCold:'\ud83e\udd76 Fermentation lente. Peut n\u00e9cessiter plus de temps.',
   fermAdj:'Temps ajust\u00e9 :',fermBy:'par temp\u00e9rature de cuisine',
   pastLabel:'R\u00e9sultat',nextLabel:'Prochain',ideaLabel:'Id\u00e9e',
-  notifDone:'Termin\u00e9',notifReady:'C\'est pr\u00eat !',
+  notifDone:'Termin\u00e9',notifReady:'C\'est pr\u00eat !',deleteNote:'Supprimer la note',markDone:'Marquer termin\u00e9',
   remaining:'restent',
   dayNames:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
   tempCool:'Fra\u00eeche',tempNormal:'Normale',tempHot:'Chaude',
@@ -1280,7 +1272,7 @@ en:{
   fermWarnCold:'\ud83e\udd76 Slow fermentation. May need more time.',
   fermAdj:'Adjusted time:',fermBy:'by kitchen temperature',
   pastLabel:'Result',nextLabel:'Next',ideaLabel:'Idea',
-  notifDone:'Done',notifReady:'Ready!',
+  notifDone:'Done',notifReady:'Ready!',deleteNote:'Delete note',markDone:'Mark done',
   remaining:'remaining',
   dayNames:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
   tempCool:'Cool',tempNormal:'Normal',tempHot:'Hot',
@@ -1383,12 +1375,16 @@ function applySharedViewFromUrl(){
   const temp=parseInt(p.get('temp'),10);
   const week=parseInt(p.get('week'),10);
   const history=p.get('history');
+  const hsf=p.get('hsf');
+  const hsort=p.get('hsort');
   if(view&&['recipe','week','history','shopping'].includes(view))S.view=view;
   if(recipe&&R[recipe])S.r=recipe;
-  if(lang&&['es','fr'].includes(lang))S.lang=lang;
+  if(lang&&['es','fr','en'].includes(lang))S.lang=lang;
   if(Number.isFinite(temp))S.kt=Math.max(14,Math.min(35,temp));
   if(Number.isFinite(week))S.wo=week;
   if(history&&['all',...Object.keys(R)].includes(history))S.hf=history;
+  if(hsf&&['all','note','photo'].includes(hsf))S.hsf=hsf;
+  if(hsort&&['recent','best'].includes(hsort))S.hsort=hsort;
 }
 
 function sv(){const d={...S,pp:null};localStorage.setItem('pan-v2',JSON.stringify(d));}
@@ -1624,7 +1620,7 @@ function rSteps(){
           <span class="tbg ${tbClass}" style="font-size:14px;padding:5px 14px">${tbLabel}</span>
         </div>
       </div>
-      <div class="sck" onclick="event.stopPropagation();tgDn(0)" style="align-self:center">${dn0?'✓':''}</div>
+      <div class="sck" role="checkbox" aria-checked="${dn0}" aria-label="${u('markDone')}" tabindex="0" onclick="event.stopPropagation();tgDn(0)" onkeydown="if(event.key===' '||event.key==='Enter'){event.stopPropagation();tgDn(0);}" style="align-self:center">${dn0?'✓':''}</div>
     </div>
   </div>`;
   /* Remaining steps (skip index 0) */
@@ -1646,7 +1642,7 @@ function rSteps(){
         <div class="smeta">${st.w?`<span>🕐 ${st.w}</span>`:''}${st.temp?`<span>🌡 ${st.temp}</span>`:''}</div></div>
         <div class="sacts">
           ${st.tm?`<button class="tbtn" id="tbtn${i}" onclick="event.stopPropagation();opT(${i})" title="${isAdj?u('fermAdj')+' '+st.tm+'min → '+adjTm+'min '+u('fermBy')+' '+S.kt+'°C':''}">⏱ ${tl}${adjInfo}</button>`:''}
-          <div class="sck" onclick="event.stopPropagation();tgDn(${i})">${dn?'✓':''}</div>
+          <div class="sck" role="checkbox" aria-checked="${dn}" aria-label="${u('markDone')}" tabindex="0" onclick="event.stopPropagation();tgDn(${i})" onkeydown="if(event.key===' '||event.key==='Enter'){event.stopPropagation();tgDn(${i});}">${dn?'✓':''}</div>
         </div>
       </div>
       <div class="sb" id="sb${i}"><div class="sact">${st.a}</div>${isAdj?`<div class="stip" style="background:linear-gradient(135deg,#fef3e0,#fdecd0);border-color:var(--gold)">🌡 ${u('fermAdj')} ${st.tm}min → <strong>${adjTm}min</strong> ${u('fermBy')} (${S.kt}°C)</div>`:''}${st.tip?`<div class="stip"><span class="stip-label">✦ ${u('astucia')}: </span>${st.tip}</div>`:''}</div>
@@ -1692,9 +1688,8 @@ function updT(){
 function tDone(){
   document.getElementById('tpsbtn').textContent=u('done');document.getElementById('tpsbtn').className='tpb tpstart';
   const f=document.createElement('div');f.className='tflash';document.body.appendChild(f);setTimeout(()=>f.remove(),800);
-  if('Notification'in window){
-    if(Notification.permission==='granted')new Notification('⏱ '+u('notifDone'),{body:CR()[S.r].steps[T.idx].t+' — '+u('notifReady')});
-    else if(Notification.permission==='default')Notification.requestPermission().then(p=>{if(p==='granted')new Notification('⏱ '+u('notifDone'),{body:CR()[S.r].steps[T.idx].t+' — '+u('notifReady')});}).catch(()=>{});
+  if('Notification'in window&&Notification.permission==='granted'){
+    try{const st=CR()[S.r]?.steps?.[T.idx];if(st)new Notification('⏱ '+u('notifDone'),{body:st.t+' — '+u('notifReady')});}catch(_){}
   }
 }
 
@@ -1745,7 +1740,7 @@ function rJ(){
       const promoteBtn=e.type==='idea'?`<button style="background:var(--blue);color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:10px;margin-left:auto;cursor:pointer" onclick="promoteE('${S.r}',${e.id})" ontouchend="promoteE('${S.r}',${e.id});event.preventDefault()">→ ${S.lang==='fr'?'Prochain':'Próximo'}</button>`:'';
       const actionBtn=e.score?`<span style="color:var(--gold);font-size:12px;margin-left:auto">${stars}</span>`:doneBtn||promoteBtn;
       return `<div class="entry ${t.ec}">
-        <button class="edel" onclick="delE('${S.r}',${e.id})">✕</button>
+        <button class="edel" onclick="delE('${S.r}',${e.id})" aria-label="${u('deleteNote')}">✕</button>
         <div class="etop"><span class="edate">${e.date||''}</span><span class="badge ${t.c}">${t.lb}</span>${actionBtn}</div>
         <div>${e.text}</div>${e.photo?`<div class="ephoto"><img src="${e.photo}" alt="${u('addPhoto')}" loading="lazy"></div>`:''}
       </div>`;
@@ -1753,11 +1748,14 @@ function rJ(){
 }
 
 // ══════════════ HISTORY ══════════════
-function setHF(f){S.hf=f;document.querySelectorAll('[id^="hf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hf-'+f).classList.add('on');rHist();sv();}
-function setHSF(f){S.hsf=f;document.querySelectorAll('[id^="hsf-"]').forEach(b=>b.classList.remove('on','btnp'));document.getElementById('hsf-'+f).classList.add('on');rHist();sv();}
+function setHF(f){S.hf=f;rHist();sv();}
+function setHSF(f){S.hsf=f;rHist();sv();}
 function setHSort(v){S.hsort=v;rHist();sv();}
 function rHist(){
   let all=[];const cr=CR();
+  const hfRow=document.getElementById('hf-row');
+  if(hfRow)hfRow.innerHTML=`<button class="btns ${S.hf==='all'?'on':''}" style="font-size:11px;padding:4px 10px" id="hf-all" onclick="setHF('all')">${u('all')}</button>`+Object.values(cr).map(r=>`<button class="btns ${S.hf===r.id?'on':''}" style="font-size:11px;padding:4px 10px" id="hf-${r.id}" onclick="setHF('${r.id}')">${r.icon} ${r.name}</button>`).join('');
+  document.querySelectorAll('[id^="hsf-"]').forEach(b=>b.classList.toggle('on',b.id==='hsf-'+S.hsf));
   Object.keys(R).forEach(id=>(S.j[id]||[]).filter(e=>e.type==='past').forEach(e=>all.push({...e,rid:id,rname:cr[id].name,icon:cr[id].icon})));
   let fl=S.hf==='all'?all:all.filter(e=>e.rid===S.hf);
   if(S.hsf==='photo')fl=fl.filter(e=>!!e.photo);
@@ -1869,11 +1867,13 @@ function rWeek(){
         <div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join('')}</div>
     </div>`;
   }).join('');
-  document.getElementById('wlist').innerHTML=days.map((d,i)=>{
+  const wlistItems=days.map((d,i)=>{
     const jsDay=d.getDay();
     const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));
-    return `<div class="wdaylist ${d.toDateString()===today.toDateString()?'dtoday':''}"><div class="dhead"><div class="dname">${dn[i]}</div><div class="ddate">${d.getDate()}</div></div><div class="dbody">${evs.length?evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)} ${ev.step.includes('🔥')?'bake':''}" onclick="selR('${ev.rid}');gv('recipe')"><div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join(''):`<div style="color:var(--ink-f);font-style:italic;font-size:12px;padding:4px 2px">${u('noEvents')}</div>`}</div></div>`;
-  }).join('');
+    if(!evs.length)return'';
+    return `<div class="wdaylist ${d.toDateString()===today.toDateString()?'dtoday':''}"><div class="dhead"><div class="dname">${dn[i]}</div><div class="ddate">${d.getDate()}</div></div><div class="dbody">${evs.map(ev=>`<div class="dev e${ev.rid.charAt(0)} ${ev.step.includes('🔥')?'bake':''}" onclick="selR('${ev.rid}');gv('recipe')"><div class="devn">${ev.icon} ${ev.rname}</div><div class="devs">${ev.step}</div><div class="devt">${ev.time}</div></div>`).join('')}</div></div>`;
+  }).filter(Boolean);
+  document.getElementById('wlist').innerHTML=wlistItems.length?wlistItems.join(''):`<div style="color:var(--ink-f);font-style:italic;padding:22px;font-size:13px;text-align:center">${u('noEvents')}</div>`;
   let pl='';
   days.forEach((d,i)=>{const jsDay=d.getDay();const evs=(epd[jsDay]||[]).sort((a,b)=>a.time.localeCompare(b.time));if(evs.length)pl+=`<div><strong>${dn[i]} ${d.getDate()}</strong>: ${evs.map(e=>`${e.icon} ${e.step} (${e.time})`).join(' \u00b7 ')}</div>`;});
   document.getElementById('wplan').innerHTML=pl||`<em>${u('noEvents')}</em>`;
@@ -1933,6 +1933,8 @@ function shareView(){
   url.searchParams.set('temp',S.kt);
   url.searchParams.set('week',S.wo);
   url.searchParams.set('history',S.hf);
+  url.searchParams.set('hsf',S.hsf);
+  url.searchParams.set('hsort',S.hsort);
   document.getElementById('surl').value=url.toString();
   openM('mshare');
   announce(u('viewReady'));
